@@ -21,7 +21,7 @@ Positioned prominently at the **TOP OF THE SIDEBAR** right below the Brand Heade
 - **Dropdown Label / Header:** `SWITCH GODOWN / WAREHOUSE`
 - **Dropdown Container:** Styled rounded pill (`bg-zinc-800/80 dark:bg-zinc-900 border border-zinc-700/60 p-2.5 shadow-sm`)
 - **Options Menu:**
-  1. `All Warehouses (Godowns Overview)` — Default consolidated view across all 4 godowns
+  1. `All Warehouses (Godowns Overview)` — Default consolidated view across all dynamic godowns
   2. `Main Warehouse` (● Online) — Filters entire dashboard & inventory stats to Main Godown
   3. `Jaipur Warehouse` (● Online) — Filters entire dashboard & inventory stats to Jaipur Godown
   4. `Ajmer Warehouse` (● Low Stock Alert) — Filters entire dashboard & inventory stats to Ajmer Godown
@@ -202,7 +202,7 @@ The Main Dashboard (`components/dashboard/dashboard/DashboardView.tsx`) is struc
 - **PROFIT & LOSS OVERVIEW:** Dual bar chart comparing Profit (Green `#10B981`) vs Expenses (Brown `#6B4627`) (`₹ 6,45,000` | `+18.7%`)
 - **WAREHOUSE SUMMARY TABLE:**
   - Columns: `Warehouse`, `Available`, `Reserved`, `At Site`, `Loading`, `Repair`, `Damaged`, `Missing`
-  - Rows: Main Warehouse, Jaipur Warehouse, Ajmer Warehouse, Jodhpur Warehouse, Total Summary Row
+  - Rows: [Dynamic List of Warehouses], Total Summary Row
 
 ### Row 3: Operational Cycles & Calendar
 - **INVENTORY STATUS:** Donut chart breakdown (Available 34%, Reserved 37%, Damaged 7%, Repair 8%, Others 14%)
@@ -246,14 +246,14 @@ The Main Dashboard (`components/dashboard/dashboard/DashboardView.tsx`) is struc
 
 ### 3. Quotation Group Components (`components/dashboard/quotation-group/`)
 - `QuotationsView.tsx`: Quotation list with status (`Draft`, `Sent`, `Approved`, `Converted`).
-- `QuotationForm.tsx`: Item selection form with event date range picker, duration calculation, transport/labour charges.
+- `QuotationForm.tsx`: Item selection form with event date range picker, Quotation Type (Ready-Made/Custom) dropdown, duration calculation, transport/labour charges.
 - `ItemSelector.tsx`: Inventory item lookup drawer with thumbnail images, stock counts, rental rates.
 - `StockAvailabilityCheck.tsx`: Real-time stock checker across 4 godowns for event date range.
 - `QuotationDetailView.tsx`: Quotation PDF preview & approval trigger.
 
 ### 4. Booking Group Components (`components/dashboard/booking-group/`)
 - `BookingsView.tsx`: Bookings list with event dates, location, amount, advance paid, status.
-- `BookingForm.tsx`: Convert quotation to booking form, advance payment input.
+- `BookingForm.tsx`: Convert quotation to booking form, advance payment input, Customer & Company Digital Signature Pad.
 - `BookingDetailView.tsx`: Comprehensive booking timeline & Godown Reservation breakdown.
 - `AgreementView.tsx`: Rental contract agreement preview & PDF generator.
 
@@ -281,7 +281,7 @@ The Main Dashboard (`components/dashboard/dashboard/DashboardView.tsx`) is struc
 - **Dispatches (`operations-group/dispatches/`):**
   - `DispatchesView.tsx`, `DispatchForm.tsx`, `DispatchDetailView.tsx`, `LoadingChecklist.tsx`: Godown loading slips, manual checklist load verification, vehicle & driver assignment.
 - **Events (`operations-group/events/`):**
-  - `EventsView.tsx`, `EventDetailView.tsx`, `EventTimeline.tsx`: Active event tracking.
+  - `EventsView.tsx`, `EventDetailView.tsx`, `EventTimeline.tsx`, `EventPlanner.tsx`: Active event tracking, Timeline functions (Welcome, Haldi, etc.) & Service Checklists.
   - `SiteReceiptForm.tsx` & `PhotoUpload.tsx`: Site receiving confirmation & setup photo upload.
   - `PackingChecklist.tsx`, `ReturnForm.tsx`: Packing checklist & return vehicle dispatch.
   - `VerificationForm.tsx` & `DamageReport.tsx`: Godown return verification (Good, Damaged, Repair, Missing, Scrap classification).
@@ -305,7 +305,7 @@ The Main Dashboard (`components/dashboard/dashboard/DashboardView.tsx`) is struc
 ### 10. HR Group Components (`components/dashboard/hr-group/`)
 - **Staff (`hr-group/staff/`):** `StaffView.tsx`, `StaffForm.tsx`, `StaffDetailView.tsx`: Employee database & wages.
 - **Attendance (`hr-group/attendance/`):** `AttendanceView.tsx`: Daily & event-wise staff attendance log.
-- **Vehicles (`hr-group/vehicles/`):** `VehiclesView.tsx`, `VehicleDetailView.tsx`: Vehicle fleet list, fitness/insurance dates, dispatch assignment.
+- **Vehicles (`hr-group/vehicles/`):** `VehiclesView.tsx`, `VehicleDetailView.tsx`: Vehicle fleet list, RC/PUC tracking, fitness/insurance dates, dispatch assignment.
 
 ### 11. Real-Time Chat Group Components (`components/dashboard/chat-group/`)
 - `ChatView.tsx` & `MessagesView.tsx`: Main WhatsApp/Instagram style 2-column workspace view (`w-full h-[calc(100vh-80px)]`).

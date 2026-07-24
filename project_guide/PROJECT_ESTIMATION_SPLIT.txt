@@ -1,0 +1,73 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - 2-DEVELOPER SPLIT TIMELINE & ESTIMATION
+================================================================================
+  Project Name: Krishna Tent & Events ERP
+  Resource Allocation: 2 Full-Stack Developers (React/Next.js + Node/Express)
+  Total Estimated Hours: 616 Hours (Including QA & Bug Fixing)
+================================================================================
+
+1. LOGICAL WORKLOAD DISTRIBUTION STRATEGY
+--------------------------------------------------------------------------------
+Instead of splitting Frontend vs Backend, we are dividing the 10 Phases into two 
+logically grouped business domains. Both developers will work as Full-Stack 
+engineers, completing both the UI and APIs for their assigned phases.
+
+- DEVELOPER 1 (Commercial & Admin Focus): 
+  Responsible for Auth, CRM, Bookings, Finance, Procurement, HR, and Chat.
+  
+- DEVELOPER 2 (Operations & Inventory Focus):
+  Responsible for Warehouses, Inventory, Reservations, Dispatch, and Returns.
+
+--------------------------------------------------------------------------------
+2. DEVELOPER 1: COMMERCIAL, ADMIN & FINANCE (5 Phases)
+--------------------------------------------------------------------------------
+Phase 1: Core Setup, Auth & Wizard                  - 36 Hours
+Phase 4: CRM, Leads & Site Visits                   - 46 Hours
+Phase 5: Quotations & Booking Engine                - 62 Hours
+Phase 9: Procurement, Vendors, HR & Chat Messenger  - 80 Hours
+Phase 10: Finance, Ledgers, Reports & Audit         - 74 Hours
+
+Subtotal Dev 1 (Development & Phase QA):            298 Hours
+System Integration & Handoff (Shared 50%):           23 Hours
+--------------------------------------------------------------------------------
+TOTAL EFFORT (DEVELOPER 1):                         321 HOURS (~40 Working Days)
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+3. DEVELOPER 2: WAREHOUSE, INVENTORY & OPERATIONS (5 Phases)
+--------------------------------------------------------------------------------
+Phase 2: Warehouse Architecture (Multiple Godowns)  - 44 Hours
+Phase 3: Inventory & Item Master Engine             - 52 Hours
+Phase 6: Stock Reservation & Planning               - 56 Hours
+Phase 7: Loading, Dispatch & Godown Transfer        - 58 Hours
+Phase 8: Site Execution, Return & Verification      - 62 Hours
+
+Subtotal Dev 2 (Development & Phase QA):            272 Hours
+System Integration & Handoff (Shared 50%):           23 Hours
+--------------------------------------------------------------------------------
+TOTAL EFFORT (DEVELOPER 2):                         295 HOURS (~37 Working Days)
+--------------------------------------------------------------------------------
+
+
+================================================================================
+4. DEPENDENCY & COLLABORATION PLAN
+================================================================================
+Since both developers are building interconnected systems, they must collaborate at 
+specific intersection points:
+
+1. Stock Availability Check (Phase 5 meets Phase 3/6):
+   - Dev 1 is building Quotations. Dev 2 is building Inventory/Reservations.
+   - Dev 1 will call Dev 2's Stock Check Service when generating a quote.
+
+2. Invoice Generation (Phase 10 meets Phase 5):
+   - Dev 1 builds Finance/Invoices based on the Booking data they built in Phase 5, 
+     but must also account for any Damaged items marked by Dev 2 in Phase 8.
+
+3. Purchase to Inventory (Phase 9 meets Phase 3):
+   - Dev 1 builds Vendor Purchase Orders. When Goods are received, they trigger 
+     an inventory update using Dev 2's Item Master services.
+
+================================================================================
+FINAL DELIVERY TIMELINE: 40 Working Days (~2 Months) for parallel execution.
+================================================================================

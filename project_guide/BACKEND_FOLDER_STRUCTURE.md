@@ -30,6 +30,7 @@ backend/
 │   │   ├── crmController.js
 │   │   ├── dashboardController.js
 │   │   ├── dispatchController.js
+│   │   ├── eventPlannerController.js
 │   │   ├── eventController.js
 │   │   ├── expenseController.js
 │   │   ├── financeController.js
@@ -76,9 +77,9 @@ backend/
 │   │   ├── ChatMessage.js
 │   │   ├── Company.js
 │   │   ├── Customer.js
-│   │   ├── CustomRole.js
 │   │   ├── Dispatch.js
 │   │   ├── Event.js
+│   │   ├── EventPlanner.js
 │   │   ├── Expense.js
 │   │   ├── GoodsReceipt.js
 │   │   ├── InventoryLedger.js
@@ -123,6 +124,7 @@ backend/
 │   │   ├── crmRoutes.js
 │   │   ├── dashboardRoutes.js
 │   │   ├── dispatchRoutes.js
+│   │   ├── eventPlannerRoutes.js
 │   │   ├── eventRoutes.js
 │   │   ├── expenseRoutes.js
 │   │   ├── financeRoutes.js

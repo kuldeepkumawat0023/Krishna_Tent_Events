@@ -153,6 +153,9 @@ frontend/src/
 │       │   └── [id]
 │       │       │   page.tsx
 │       │       │   
+│       │       ├── planner
+│       │       │       page.tsx
+│       │       │       
 │       │       ├── site-receipt
 │       │       │       page.tsx
 │       │       │       
@@ -405,6 +408,7 @@ frontend/src/
 │       │           EventDetailView.tsx
 │       │           EventsView.tsx
 │       │           EventTimeline.tsx
+│       │           EventPlanner.tsx
 │       │           SiteReceiptForm.tsx
 │       │           PhotoUpload.tsx
 │       │           PackingChecklist.tsx
