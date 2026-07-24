@@ -85,13 +85,14 @@ This document provides a comprehensive mapping between the **Business Operations
 | Step | Technical Route | Component | Backend Service |
 |---|---|---|---|
 | **1. Lead & Site Visit** | `/crm/leads`, `/crm/site-visits` | `crm-group/leads/`, `crm-group/site-visits/` | `crm.services.ts` |
-| **2. Stock Check & Quotation** | `/quotations/new` | `quotation-group/` (`StockAvailabilityCheck`, `QuotationForm`) | `quotation.services.ts` |
-| **3. Booking & Advance** | `/bookings/new` | `booking-group/` (`BookingForm`, `AgreementView`) | `booking.services.ts` |
-| **4. Reservation & Split** | `/reservation/[bookingId]` | `operations-group/reservation/` (`ReservationSplit`) | `reservation.services.ts` |
-| **5. Loading & Dispatch** | `/dispatches/new` | `operations-group/dispatches/` (`LoadingChecklist`) | `dispatch.services.ts` |
-| **6. Site Setup & Photos** | `/events/[id]/site-receipt` | `operations-group/events/` (`SiteReceiptForm`, `PhotoUpload`) | `event.services.ts` |
-| **7. Return & Packing** | `/events/[id]/return` | `operations-group/events/` (`PackingChecklist`, `ReturnForm`) | `return.services.ts` |
-| **8. Verification & Damage** | `/events/[id]/verification` | `operations-group/events/` (`VerificationForm`, `DamageReport`) | `verification.services.ts` |
+| **2. Event Planning & Timeline** | `/events/[id]/planner` | `operations-group/events/` (`EventPlanner`) | `eventPlanner.services.ts` |
+| **3. Stock Check & Quotation** | `/quotations/new` | `quotation-group/` (`StockAvailabilityCheck`, `QuotationForm`) | `quotation.services.ts` |
+| **4. Booking & Advance** | `/bookings/new` | `booking-group/` (`BookingForm`, `AgreementView`) | `booking.services.ts` |
+| **5. Reservation & Split** | `/reservation/[bookingId]` | `operations-group/reservation/` (`ReservationSplit`) | `reservation.services.ts` |
+| **6. Loading & Dispatch** | `/dispatches/new` | `operations-group/dispatches/` (`LoadingChecklist`) | `dispatch.services.ts` |
+| **7. Site Setup & Photos** | `/events/[id]/site-receipt` | `operations-group/events/` (`SiteReceiptForm`, `PhotoUpload`) | `event.services.ts` |
+| **8. Return & Packing** | `/events/[id]/return` | `operations-group/events/` (`PackingChecklist`, `ReturnForm`) | `return.services.ts` |
+| **9. Verification & Damage** | `/events/[id]/verification` | `operations-group/events/` (`VerificationForm`, `DamageReport`) | `verification.services.ts` |
 
 ---
 

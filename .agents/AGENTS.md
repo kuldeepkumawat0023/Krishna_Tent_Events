@@ -93,7 +93,7 @@ Krishna Tent & Events ERP/
 | `booking-group/` | (flat) | BookingForm, AgreementView |
 | `warehouse-group/` | `warehouses/`, `transfer/` | WarehouseForm, ZoneManager, RackManager, StockTransferForm |
 | `inventory-group/` | `categories/`, `items/`, `ledger/` | ItemForm, CategoryForm, LedgerView |
-| `operations-group/` | `reservation/`, `dispatches/`, `events/` | ReservationForm, DispatchForm, SiteReceiptForm, ReturnForm, VerificationForm |
+| `operations-group/` | `reservation/`, `dispatches/`, `events/` | ReservationForm, DispatchForm, SiteReceiptForm, ReturnForm, VerificationForm, EventPlanner |
 | `finance-group/` | `payments/`, `expenses/`, `invoices/`, `cashbook/`, `bankbook/` | PaymentForm, ExpenseForm, InvoiceBuilder |
 | `purchases-group/` | `purchases/`, `vendors/` | PurchaseForm, VendorForm |
 | `hr-group/` | `staff/`, `attendance/`, `vehicles/` | StaffForm, AttendanceView, VehiclesView |

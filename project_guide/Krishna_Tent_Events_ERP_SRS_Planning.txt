@@ -160,6 +160,7 @@ SECTION 4: COMPLETE FORM FIELDS SPECIFICATION (ALL 30+ FORMS)
 
 4.11 QUOTATION FORM (`QuotationForm.tsx`)
 - Customer ID: Dropdown | Required
+- Quotation Type: Select | Required | Ready-Made Package / Custom Quotation
 - Event Type: Text | Required
 - Event Start Date & Time: DateTime | Required
 - Event End Date & Time: DateTime | Required
@@ -184,7 +185,9 @@ SECTION 4: COMPLETE FORM FIELDS SPECIFICATION (ALL 30+ FORMS)
 - Advance Payment Amount (Rs): Number | Required | e.g., 30% - 50% of total
 - Payment Mode: Select | Required | Cash / UPI / NEFT / Cheque
 - Payment Reference Number: Text | Optional (Required if UPI/NEFT)
-- Contract Signed: Checkbox | Required
+- Digital Signature (Customer): Canvas/Image | Required for Agreement
+- Digital Signature (Company): Canvas/Image | Required for Agreement
+- Contract Signed & Generated: PDF | Auto-Generated Agreement Copy
 - Booking Status: Select | Required | Confirmed
 
 4.13 INTER-GODOWN STOCK TRANSFER FORM (`StockTransferForm.tsx`)
@@ -351,8 +354,11 @@ SECTION 4: COMPLETE FORM FIELDS SPECIFICATION (ALL 30+ FORMS)
 - Vehicle Type: Select | Required | Heavy Commercial Truck / Pickup Bolero / Tempo / Mini Van
 - Owner Type: Select | Required | Owned / Hired Transporter
 - Driver Name: Text | Optional
+- RC Number & Document: Text/File | Optional
+- PUC Expiry Date: Date | Optional
 - Fitness Certificate Expiry Date: Date | Optional
 - Insurance Expiry Date: Date | Optional
+- Last Service Date & Mileage: Date/Number | Optional
 
 4.30 RESORT ROOM BOOKING FORM (`RoomBookingForm.tsx`)
 - Customer ID: Dropdown | Required
@@ -373,6 +379,11 @@ SECTION 4: COMPLETE FORM FIELDS SPECIFICATION (ALL 30+ FORMS)
 - Message Status: Auto | Sent / Delivered / Read
 - AUTOMATED INVITE SYSTEM MESSAGE: Auto-posted when a new team member is added/invited to the ERP portal ("Welcome to Krishna Tent & Events! 👋 You have been assigned to Jaipur Warehouse as Supervisor.")
 
+4.32 EVENT TIMELINE & SERVICE CHECKLIST FORM (`EventPlanner.tsx`)
+- Event Booking ID: Dropdown | Required
+- Event Timeline Functions: Multi-Select | Welcome, Haldi, Mehendi, Sangeet, Baraat, Wedding, Reception
+- Assigned Department Checklists: Checkboxes | Decoration, Lighting, Sound, DJ, Catering, Hospitality, Photography, Transportation, Rooms
+- Function Date & Time Schedule: Array of DateTimes | Required per selected function
 
 ================================================================================
 SECTION 5: 8 BUSINESS DEPARTMENT WORKFLOWS & OPERATIONAL ASCII DIAGRAMS
