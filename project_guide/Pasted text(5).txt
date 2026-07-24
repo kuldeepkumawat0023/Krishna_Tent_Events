@@ -1,0 +1,1397 @@
+Maine aapka pura flow read kiya.
+
+Mere hisaab se abhi bhi ek bahut important cheez missing hai.
+
+Abhi SRS Event Flow batata hai, lekin Business Operations (Owner ka daily management) detail me nahi batata.
+
+Professional ERP me 2 parallel flows hone chahiye.
+
+Flow 1 : Business Management (Owner ERP Manage Karega)
+
+Ye flow roz chalta rahega.
+
+Owner Login
+      │
+      ▼
+Dashboard
+      │
+      ▼
+Check Business Status
+      │
+      ├── Today's Events
+      ├── Pending Payments
+      ├── Warehouse Stock
+      ├── Staff Attendance
+      ├── Vehicles
+      ├── Vendor Due
+      ├── Purchase Requests
+      └── Alerts
+
+Ab Owner decide karega kis department me kaam karna hai.
+
+Department 1 : Warehouse Management
+
+Suppose Jaipur Warehouse me Chairs kam ho gayi.
+
+Dashboard
+
+Jaipur Warehouse
+
+Plastic Chair
+
+Available : 120
+
+Minimum : 300
+
+Status
+
+Low Stock
+
+Store Manager
+
+↓
+
+Purchase Request
+
+Need
+
+300 Plastic Chairs
+
+↓
+
+Owner Approval
+
+↓
+
+Purchase Order
+
+↓
+
+Vendor
+
+↓
+
+Goods Receive
+
+↓
+
+Quality Check
+
+↓
+
+Warehouse Entry
+
+↓
+
+Inventory Update
+
+↓
+
+Available Stock
+
+Ab Dashboard
+
+Jaipur Warehouse
+
+Plastic Chair
+
+420
+Department 2 : New Item Add
+
+Owner decide karta hai ki ab Rental me LED Screen bhi deni hai.
+
+Owner
+
+↓
+
+Inventory
+
+↓
+
+Add Item
+
+Category
+
+LED Wall
+
+Item Name
+
+P4 LED Wall
+
+Code
+
+LED001
+
+Unit
+
+Sq Ft
+
+Purchase Cost
+
+Rental Cost
+
+Minimum Stock
+
+Barcode
+
+↓
+
+Save
+
+↓
+
+Warehouse Select
+
+↓
+
+Opening Stock
+
+↓
+
+Ready
+
+Ab ye item quotation me bhi dikhega.
+
+Department 3 : Warehouse Transfer
+
+Example
+
+Main Warehouse
+
+Chair
+
+1200
+
+Jaipur Warehouse
+
+Chair
+
+80
+
+Owner
+
+↓
+
+Transfer Stock
+
+From
+
+Main Warehouse
+
+To
+
+Jaipur Warehouse
+
+Chair
+
+300
+
+↓
+
+Approval
+
+↓
+
+Loading
+
+↓
+
+Dispatch
+
+↓
+
+Receive
+
+↓
+
+Stock Updated
+
+Main Warehouse
+
+900
+
+Jaipur Warehouse
+
+380
+
+Department 4 : Repair Management
+
+Warehouse me
+
+Chair
+
+Broken
+
+Store Manager
+
+↓
+
+Repair Request
+
+↓
+
+Owner Approve
+
+↓
+
+Repair Vendor
+
+↓
+
+Repair Complete
+
+↓
+
+Warehouse Entry
+
+↓
+
+Available Again
+
+Department 5 : Scrap
+
+Repair possible nahi.
+
+↓
+
+Scrap Request
+
+↓
+
+Owner Approval
+
+↓
+
+Inventory Remove
+
+↓
+
+Scrap Sale Entry
+
+↓
+
+Finance Entry
+
+Department 6 : Purchase Management
+
+Vendor
+
+ABC Furniture
+
+↓
+
+Purchase Order
+
+↓
+
+Goods Receive
+
+↓
+
+Invoice Upload
+
+↓
+
+Payment
+
+↓
+
+Inventory Update
+
+↓
+
+Reports
+
+Department 7 : Event Order Flow
+
+Ab customer order aata hai.
+
+Customer Call
+        │
+        ▼
+CRM
+        │
+        ▼
+Site Visit
+        │
+        ▼
+Requirement Discussion
+        │
+        ▼
+Event Planning
+        │
+        ▼
+Stock Availability Check
+        │
+        ▼
+Quotation
+        │
+        ▼
+Customer Approval
+        │
+        ▼
+Booking
+        │
+        ▼
+Advance Payment
+
+Yahan tak Sales Team ka kaam.
+
+Store Team ka Flow
+
+Booking Confirm
+
+↓
+
+Reservation
+
+↓
+
+Loading Slip
+
+↓
+
+Barcode Scan
+
+↓
+
+Vehicle Loading
+
+↓
+
+Dispatch
+
+↓
+
+Site Receive
+
+↓
+
+Setup
+
+↓
+
+Event Complete
+
+↓
+
+Packing
+
+↓
+
+Return
+
+↓
+
+Verification
+
+↓
+
+Available
+
+Finance Flow
+
+Booking
+
+↓
+
+Advance
+
+↓
+
+Expenses
+
+↓
+
+Vendor Payment
+
+↓
+
+Final Payment
+
+↓
+
+GST
+
+↓
+
+Profit
+
+↓
+
+Reports
+
+Owner ka Daily Workflow
+
+Subah 9 baje
+
+Login
+
+↓
+
+Dashboard
+
+↓
+
+Check
+
+Aaj kitne events hain
+Kitna material dispatch hona hai
+Kis warehouse me stock kam hai
+Kaun absent hai
+Kis customer ka payment due hai
+Kis vendor ka payment due hai
+
+↓
+
+Decision
+
+Purchase Approve
+
+Warehouse Transfer
+
+Event Approval
+
+Payment Approval
+
+Staff Approval
+
+↓
+
+Evening
+
+Dashboard
+
+↓
+
+Check
+
+Dispatch Complete
+
+Return Complete
+
+Today's Income
+
+Today's Expense
+
+Profit
+
+Stock Updated
+
+↓
+
+Logout
+
+Professional ERP Architecture
+BUSINESS MANAGEMENT
+        │
+        ├── Company
+        ├── Branches
+        ├── Warehouses
+        ├── Inventory
+        ├── Purchase
+        ├── Vendors
+        ├── Staff
+        ├── Vehicles
+        ├── Finance
+        └── Reports
+                │
+                ▼
+EVENT MANAGEMENT
+                │
+                ├── CRM
+                ├── Site Visit
+                ├── Quotation
+                ├── Booking
+                ├── Calendar
+                ├── Resource Planning
+                ├── Material Reservation
+                ├── Dispatch
+                ├── Event Execution
+                ├── Return
+                ├── Verification
+                └── Event Closure
+Meri recommendation
+
+Aapka current document event process ko achchhe se cover karta hai, lekin enterprise-level SRS ke liye isme Business Operations Manual bhi add hona chahiye. Isme owner, manager, purchase manager, warehouse manager, accountant aur supervisor ke daily workflows, approval hierarchy, aur module-wise responsibilities clearly define honi chahiye. Tabhi ye document ek complete ERP SRS banega.
+
+Haan, ye main kar sakta hoon. Maine jo content aapne diya hai usko dekhkar lagta hai ki abhi wo notes/documentation hai, professional SRS nahi.
+
+Is project ko enterprise level par banana hai to main isko end-to-end Software Requirement Specification (SRS) me convert karunga, jisme sirf modules nahi, balki poora business flow hoga.
+
+Main is structure me banaunga:
+
+1. Executive Summary
+Project Vision
+Business Goals
+Scope
+Users
+ERP Architecture
+2. Complete Business Setup Flow
+Website
+    ↓
+Create Company
+    ↓
+Owner Registration
+    ↓
+Subscription (Optional)
+    ↓
+Branch Setup
+    ↓
+Warehouse Setup
+    ↓
+Staff Setup
+    ↓
+Vehicle Setup
+    ↓
+Vendor Setup
+    ↓
+Item Categories
+    ↓
+Item Master
+    ↓
+Opening Stock
+    ↓
+ERP Ready
+3. Complete Business Management Flow (NEW)
+
+Ye part abhi aapke document me properly nahi hai.
+
+Isme detail rahegi:
+
+Company Management
+Branch Management
+Warehouse Management
+Item Management
+Purchase Management
+Vendor Management
+Vehicle Management
+Staff Management
+Finance Management
+
+Har module ke liye:
+
+Purpose
+User
+Screen
+Workflow
+Validation
+Database Logic
+4. Warehouse Management (Complete)
+
+Sirf warehouse create nahi.
+
+Complete lifecycle
+
+Create Warehouse
+      ↓
+Create Zone
+      ↓
+Create Rack
+      ↓
+Item Master
+      ↓
+Opening Stock
+      ↓
+Purchase
+      ↓
+Warehouse Entry
+      ↓
+Stock Transfer
+      ↓
+Reservation
+      ↓
+Dispatch
+      ↓
+Site
+      ↓
+Return
+      ↓
+Verification
+      ↓
+Repair
+      ↓
+Scrap
+      ↓
+Stock Adjustment
+
+Har step ke screenshots/wireframe level description ke saath.
+
+5. Customer Order Flow
+
+Customer enquiry se lekar event close hone tak.
+
+Lead
+ ↓
+CRM
+ ↓
+Site Visit
+ ↓
+Requirement Discussion
+ ↓
+Quotation
+ ↓
+Approval
+ ↓
+Booking
+ ↓
+Advance
+ ↓
+Calendar
+ ↓
+Planning
+ ↓
+Reservation
+ ↓
+Loading
+ ↓
+Dispatch
+ ↓
+Setup
+ ↓
+Execution
+ ↓
+Return
+ ↓
+Verification
+ ↓
+Billing
+ ↓
+P&L
+ ↓
+Closure
+6. Material Movement (Core ERP Engine)
+
+Ye sabse detailed section hoga.
+
+Har chair, tent, AC, table, generator ka movement.
+
+Purchase
+      ↓
+Warehouse
+      ↓
+Rack
+      ↓
+Available
+      ↓
+Reserve
+      ↓
+Loading
+      ↓
+Vehicle
+      ↓
+Dispatch
+      ↓
+Site Receive
+      ↓
+Usage
+      ↓
+Packing
+      ↓
+Return
+      ↓
+Warehouse Receive
+      ↓
+Inspection
+      ├── Good
+      ├── Damaged
+      ├── Repair
+      ├── Missing
+      └── Scrap
+      ↓
+Available Again
+7. Owner Daily Workflow
+
+Subah se shaam tak owner kya karega.
+
+Login
+
+↓
+
+Dashboard
+
+↓
+
+Review
+
+↓
+
+Approve Purchases
+
+↓
+
+Approve Quotations
+
+↓
+
+Check Warehouse
+
+↓
+
+Transfer Stock
+
+↓
+
+Approve Payments
+
+↓
+
+Review Reports
+
+↓
+
+Logout
+8. Store Manager Workflow
+Login
+
+↓
+
+Warehouse Dashboard
+
+↓
+
+Receive Purchase
+
+↓
+
+Update Stock
+
+↓
+
+Reserve Material
+
+↓
+
+Loading
+
+↓
+
+Dispatch
+
+↓
+
+Receive Return
+
+↓
+
+Verification
+
+↓
+
+Repair
+
+↓
+
+Close Day
+9. Supervisor Workflow
+Receive Task
+
+↓
+
+Reach Site
+
+↓
+
+Receive Material
+
+↓
+
+Setup
+
+↓
+
+Photo Upload
+
+↓
+
+Attendance
+
+↓
+
+Packing
+
+↓
+
+Return
+
+↓
+
+Close Event
+10. Accountant Workflow
+Booking Payment
+
+↓
+
+Vendor Payment
+
+↓
+
+Expense Entry
+
+↓
+
+Cash Book
+
+↓
+
+Bank Book
+
+↓
+
+GST
+
+↓
+
+Invoice
+
+↓
+
+Profit & Loss
+11. Complete Database Design
+Entity Relationship Diagram (ERD)
+100+ Tables
+Relationships
+Foreign Keys
+Approval Tables
+Audit Tables
+Stock Ledger
+Transaction Ledger
+12. API Flow
+
+Har module ke REST APIs.
+
+Example:
+
+Authentication APIs
+Business APIs
+Warehouse APIs
+Inventory APIs
+CRM APIs
+Event APIs
+Dispatch APIs
+Finance APIs
+13. Role Based Permissions
+Owner
+Admin
+Manager
+Store Manager
+Accountant
+Supervisor
+Driver
+Staff
+Customer (Mobile App)
+
+Har role ki permissions matrix.
+
+14. UI/UX Screen Flow
+
+Complete navigation.
+
+Login
+
+↓
+
+Dashboard
+
+├── CRM
+
+├── Events
+
+├── Calendar
+
+├── Warehouse
+
+├── Inventory
+
+├── Purchase
+
+├── Vendors
+
+├── Staff
+
+├── Finance
+
+├── Reports
+
+├── Settings
+15. Mobile App Flow
+
+Customer
+
+Staff
+
+Supervisor
+
+Driver
+
+Owner
+
+Sabke alag mobile workflows.
+
+Final Deliverable
+
+Main is project ko 100–150+ pages ka Enterprise Software Requirement Specification (SRS) banaunga, jisme:
+
+Business Analysis
+Functional Requirements
+Non-Functional Requirements
+End-to-End User Journey
+Complete Module Flow
+Warehouse Flow
+Event Flow
+Material Movement Flow
+Business Operations Flow
+Approval Flow
+Screen Flow
+Database Design
+API Design
+RBAC
+Reports
+Notifications
+Future Roadmap
+
+sab kuch professional format me hoga.
+
+Ye sirf feature list nahi hogi, balki developer, UI/UX designer, QA tester aur client sab ke liye implementation-ready document hoga.
+
+Subscription (Optional)
+ya nhi rkana q ya ek perosonal user ka liaya bna rha ha tp subscribution ha nhi rkanaha ya user ki rekvarment ha uk asa chiya 
+
+Bilkul sahi. Agar ye sirf Krishna Tent & Events ke liye custom ERP ban raha hai aur future me SaaS ya multiple companies ko bechna nahi hai, to Subscription, Trial, Pricing Plans jaise modules bilkul nahi hone chahiye. Ye user ki requirement me bhi nahi hai.
+
+Is case me initial flow aisa hoga:
+
+Open ERP
+      │
+      ▼
+Owner Login
+      │
+      ▼
+First Time Setup Wizard
+      │
+      ├── Company Information
+      ├── Business Profile
+      ├── Warehouse Setup
+      ├── Staff Setup
+      ├── Vendor Setup
+      ├── Vehicle Setup
+      ├── Item Categories
+      ├── Item Master
+      ├── Opening Stock
+      ├── Finance Settings
+      └── User Permissions
+      │
+      ▼
+Dashboard
+
+Aur agar software install hone ke baad Owner pehli baar login karta hai to:
+
+Login
+   │
+   ▼
+First Time Setup
+   │
+   ▼
+Company Details
+   │
+   ▼
+Main Warehouse Create
+   │
+   ▼
+Create Users
+   │
+   ▼
+Add Initial Stock
+   │
+   ▼
+ERP Ready
+Is project me main sections ye honge:
+Company Setup
+Dashboard
+CRM
+Event Management
+Quotation
+Booking
+Warehouse Management
+Inventory & Stock
+Material Reservation
+Dispatch
+Site Receipt
+Return
+Verification
+Purchase
+Vendors
+Staff
+Vehicles
+Finance
+Reports
+Settings
+
+Subscription, Trial, Billing Plans, Tenant Management jaise modules is SRS me nahi rahenge.
+
+Mera suggestion
+
+Is SRS ko main user ki requirement ke hisaab se hi banaunga. Ye Krishna Tent & Events ka single-company ERP hoga, jisme poora focus Business Management + Warehouse + Event Operations + Material Movement par rahega. Isme unnecessary SaaS features add nahi kiye jayenge.
+
+comnay nhi eska user ka 4 warehiue ha uka mangemnt ka tent ko bookeng or use taenat mangemant kaiya ya softwre bnaa ha 
+
+Ab mujhe requirement clear ho gayi.
+
+Ye company management software nahi hai.
+
+Ye Krishna Tent & Events ke owner ke liye ERP hai.
+
+Owner ke paas maan lo 4 Warehouses (Godown) hain aur wahi unka business hai.
+
+Example:
+
+Main Warehouse (Furniture)
+Jaipur Warehouse
+Lighting Warehouse
+Resort Store
+
+Ab software ka main purpose hai:
+
+Tent booking manage karna
+Warehouse manage karna
+Material movement track karna
+Event execution manage karna
+Finance manage karna
+
+Isliye SRS ka starting flow Company Registration se nahi hoga.
+
+Actual Flow
+Login
+   │
+   ▼
+Dashboard
+   │
+   ▼
+Check Today's Events
+Check Pending Dispatch
+Check Warehouse Stock
+Check Pending Payments
+Check Staff
+Owner ka Daily Flow
+
+Subah owner login karta hai.
+
+Dashboard dekhta hai.
+
+Usko dikhta hai
+
+Today's Events : 4
+
+Upcoming : 8
+
+Pending Dispatch : 2
+
+Material At Site : 3 Events
+
+Pending Return : 1
+
+Low Stock : Chairs
+
+Pending Payment : ₹4,20,000
+
+Ab owner decide karega.
+
+Agar stock kam hai
+
+↓
+
+Warehouse Module
+
+↓
+
+Check Warehouse
+
+Main Warehouse
+
+Chair : 50
+
+Required : 300
+
+Owner dekhega
+
+Dusre warehouse me kitna stock hai.
+
+Jaipur Warehouse
+
+Chair : 500
+
+↓
+
+Transfer
+
+Jaipur Warehouse
+
+↓
+
+Main Warehouse
+
+Chair
+
+300
+
+↓
+
+Loading
+
+↓
+
+Dispatch
+
+↓
+
+Receive
+
+↓
+
+Stock Update
+
+Agar Customer ka Order Aya
+
+Customer call karta hai.
+
+↓
+
+CRM
+
+↓
+
+Customer Add
+
+↓
+
+Site Visit
+
+↓
+
+Requirement
+
+↓
+
+Quotation
+
+↓
+
+Booking
+
+↓
+
+Advance
+
+↓
+
+Calendar
+
+↓
+
+Material Planning
+
+Ab system check karega
+
+Chair
+
+500
+
+Kis Warehouse me Available Hai?
+
+System bolega
+
+Main Warehouse
+
+100
+
+Jaipur Warehouse
+
+300
+
+Lighting Warehouse
+
+100
+
+System automatically suggest karega
+
+Total
+
+500
+
+Available
+
+Ab reservation hogi.
+
+Main Warehouse
+
+100 Reserve
+
+Jaipur Warehouse
+
+300 Reserve
+
+Lighting Warehouse
+
+100 Reserve
+Dispatch Flow
+
+Event Date
+
+↓
+
+Har warehouse se loading hogi.
+
+↓
+
+Vehicle
+
+↓
+
+Site
+
+↓
+
+Receive
+
+↓
+
+Setup
+
+↓
+
+Event
+
+↓
+
+Packing
+
+↓
+
+Return
+
+↓
+
+Warehouse
+
+↓
+
+Verification
+
+Warehouse ka Daily Flow
+
+Store Manager login karega.
+
+Dashboard
+
+↓
+
+Purchase Receive
+
+↓
+
+New Stock Entry
+
+↓
+
+Warehouse Transfer
+
+↓
+
+Reservation
+
+↓
+
+Loading
+
+↓
+
+Dispatch
+
+↓
+
+Return
+
+↓
+
+Verification
+
+↓
+
+Repair
+
+↓
+
+Stock Close
+Is ERP ka Main Backbone
+WAREHOUSE
+
+↓
+
+AVAILABLE STOCK
+
+↓
+
+EVENT BOOKING
+
+↓
+
+RESERVATION
+
+↓
+
+LOADING
+
+↓
+
+DISPATCH
+
+↓
+
+SITE
+
+↓
+
+RETURN
+
+↓
+
+VERIFICATION
+
+↓
+
+AVAILABLE AGAIN
+Is ERP me sabse important modules honge
+Dashboard
+        │
+CRM
+        │
+Quotation
+        │
+Booking
+        │
+Calendar
+        │
+Material Planning
+        │
+Warehouse
+        │
+Inventory
+        │
+Reservation
+        │
+Dispatch
+        │
+Site Receipt
+        │
+Event Execution
+        │
+Return
+        │
+Verification
+        │
+Finance
+        │
+Reports
+Meri Recommendation
+
+Is software ko Warehouse-Centric Event ERP ke roop me design karna chahiye, kyunki user ka poora business 4 warehouses aur unke material par depend karta hai. Har tent, chair, table, light, generator, AC ya decoration item ka warehouse se event aur event se warehouse tak complete lifecycle track hoga. Isliye SRS ka center Warehouse → Material Movement → Event Execution hona chahiye, na ki Company Registration ya Subscription. Yahi flow user ki actual requirement ke sabse kareeb hai.

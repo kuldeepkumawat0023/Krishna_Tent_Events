@@ -1,0 +1,397 @@
+================================================================================
+  DEPLOYMENT PIPELINE FLOW — GitLab → CapRover → Cloudflare → Live Domain
+================================================================================
+  Project: Krishna Tent & Events ERP
+  Stack: Next.js 16 (Frontend) + Express.js (Backend) + MongoDB
+  Hosting: CapRover (Self-Hosted PaaS on VPS)
+  DNS & CDN: Cloudflare
+  Git Provider: GitLab (Source Code Repository)
+================================================================================
+
+
+================================================================================
+SECTION 1: COMPLETE DEPLOYMENT FLOW — STEP-BY-STEP (WHAT HAPPENS BEHIND THE SCENES)
+================================================================================
+
+  You Push Code → GitLab Receives → CapRover Builds → Cloudflare Routes → User Sees Live Site
+
+  Here is the EXACT flow explained in detail:
+
+
+STEP 1: DEVELOPER PUSHES CODE TO GITLAB
+--------------------------------------------------------------------------------
+  Developer (You) runs:
+    $ git add .
+    $ git commit -m "Added Chat Feature"
+    $ git push origin dev
+
+  What Happens:
+  - Your local code files are compressed into a Git pack.
+  - Git protocol sends the pack to GitLab's remote server over HTTPS/SSH.
+  - GitLab stores the new commit in the `dev` branch of your repository.
+  - GitLab updates the branch HEAD pointer to your latest commit hash.
+  - At this point, your code is ONLY in GitLab. Nothing is deployed yet.
+
+
+STEP 2: CAPROVER RECEIVES THE BUILD TRIGGER
+--------------------------------------------------------------------------------
+  Two ways this happens:
+
+  METHOD A: GitLab Webhook (Automatic Trigger)
+  - GitLab has a Webhook URL configured pointing to your CapRover server:
+    https://captain.yourdomain.com/api/v2/user/apps/webhooks/triggerbuild
+  - When code is pushed to the `dev` branch, GitLab sends an HTTP POST
+    request to this webhook URL with the branch name and commit hash.
+  - CapRover receives this webhook and starts the build automatically.
+
+  METHOD B: CapRover CLI / Dashboard (Manual Force Build)
+  - You open CapRover Dashboard → Select App → Click "Force Build"
+  - OR run from terminal:
+    $ caprover deploy -a your-app-name
+  - This tells CapRover: "Pull the latest code from GitLab and build it."
+
+  What Happens Behind the Scenes:
+  - CapRover's build engine (Captain) receives the trigger.
+  - CapRover connects to your GitLab repository using a Deploy Token or SSH Key.
+  - CapRover runs `git clone` or `git pull` to fetch the latest `dev` branch code
+    into the CapRover server's temporary build directory.
+
+
+STEP 3: CAPROVER BUILDS THE APPLICATION (DOCKER BUILD PROCESS)
+--------------------------------------------------------------------------------
+  CapRover is essentially a Docker orchestrator. Here's what it does:
+
+  3.1 READ THE BUILD CONFIGURATION
+  --------------------------------
+  CapRover looks for one of these files in your project root:
+  - `captain-definition` (CapRover's build config file)
+  - `Dockerfile` (Standard Docker build file)
+
+  Example `captain-definition` file:
+  {
+    "schemaVersion": 2,
+    "dockerfilePath": "./Dockerfile"
+  }
+
+  This tells CapRover: "Use the Dockerfile in the project root to build."
+
+  3.2 DOCKER BUILD STARTS
+  --------------------------------
+  CapRover internally runs the equivalent of:
+    $ docker build -t your-app-image:latest .
+
+  What happens inside the Dockerfile (for Next.js Frontend example):
+  ┌──────────────────────────────────────────────────────────┐
+  │  FROM node:20-alpine                                     │
+  │  WORKDIR /app                                            │
+  │  COPY package.json package-lock.json ./                  │
+  │  RUN npm ci                      ← Install dependencies  │
+  │  COPY . .                        ← Copy all source code   │
+  │  RUN npm run build               ← Next.js production build│
+  │  EXPOSE 3000                                              │
+  │  CMD ["npm", "start"]            ← Start the server       │
+  └──────────────────────────────────────────────────────────┘
+
+  Background Processes During Docker Build:
+  1. Node.js Alpine base image is pulled (if not cached).
+  2. `npm ci` installs all node_modules from package-lock.json.
+  3. TypeScript compilation happens (tsc).
+  4. Next.js compiles all pages, components, and API routes.
+  5. Static assets are optimized (images, CSS, JS bundles).
+  6. A `.next/` build output folder is generated.
+  7. Docker packages everything into a single Docker Image.
+
+  For Backend (Express.js):
+  ┌──────────────────────────────────────────────────────────┐
+  │  FROM node:20-alpine                                     │
+  │  WORKDIR /app                                            │
+  │  COPY package.json package-lock.json ./                  │
+  │  RUN npm ci --production                                  │
+  │  COPY . .                                                 │
+  │  EXPOSE 5000                                              │
+  │  CMD ["node", "server.js"]                                │
+  └──────────────────────────────────────────────────────────┘
+
+  3.3 DOCKER IMAGE CREATED
+  --------------------------------
+  - The final Docker Image contains your ENTIRE application:
+    Node.js runtime + node_modules + compiled source code + build output.
+  - This image is stored in CapRover's internal Docker Registry on the server.
+  - Image is tagged with the commit hash or "latest".
+
+
+STEP 4: CAPROVER DEPLOYS THE NEW CONTAINER (ZERO-DOWNTIME SWAP)
+--------------------------------------------------------------------------------
+  Now CapRover has the new Docker Image. Deployment happens like this:
+
+  4.1 START NEW CONTAINER
+  - CapRover starts a NEW Docker Container from the freshly built image.
+  - The container runs your app (Next.js on port 3000, Express on port 5000).
+  - CapRover waits for the container to become "healthy" (responds to HTTP).
+
+  4.2 HEALTH CHECK
+  - CapRover pings the new container's health endpoint.
+  - If the app responds with HTTP 200, the container is marked as HEALTHY.
+  - If the health check fails, CapRover keeps the OLD container running
+    and marks this deployment as FAILED.
+
+  4.3 SWAP OLD → NEW (Zero Downtime)
+  - Once the new container is healthy, CapRover updates its internal
+    Nginx reverse proxy to point to the NEW container.
+  - The OLD container is stopped and removed.
+  - This swap happens in milliseconds — users never see downtime.
+
+  Visual Flow:
+  ┌──────────────────────────────────────────────────────┐
+  │  OLD Container (v1.0)  ←──── Nginx Proxy ←──── User │
+  │  [Running]                                           │
+  │                                                      │
+  │  NEW Container (v1.1)                                │
+  │  [Starting... Health Check... HEALTHY!]              │
+  │                                                      │
+  │  Nginx Proxy SWAPS:                                  │
+  │  OLD Container (v1.0)  [STOPPED & REMOVED]           │
+  │  NEW Container (v1.1)  ←──── Nginx Proxy ←──── User │
+  └──────────────────────────────────────────────────────┘
+
+
+STEP 5: CAPROVER'S INTERNAL NGINX REVERSE PROXY
+--------------------------------------------------------------------------------
+  CapRover runs an Nginx web server that acts as a "traffic director":
+
+  - All incoming HTTP/HTTPS requests hit Nginx first.
+  - Nginx checks the domain/subdomain in the request.
+  - Nginx routes the request to the correct Docker Container.
+
+  Example Nginx Config (auto-generated by CapRover):
+  ┌──────────────────────────────────────────────────────┐
+  │  server {                                             │
+  │    listen 443 ssl;                                    │
+  │    server_name dev.krishnatent.com;                   │
+  │                                                       │
+  │    ssl_certificate /path/to/cloudflare/cert.pem;      │
+  │    ssl_certificate_key /path/to/cloudflare/key.pem;   │
+  │                                                       │
+  │    location / {                                       │
+  │      proxy_pass http://172.17.0.5:3000;   ← Container│
+  │    }                                                  │
+  │  }                                                    │
+  └──────────────────────────────────────────────────────┘
+
+  So when someone visits `dev.krishnatent.com`:
+  1. Request hits CapRover's Nginx.
+  2. Nginx sees the domain = `dev.krishnatent.com`.
+  3. Nginx forwards (proxies) the request to the Docker Container.
+  4. Container processes the request and sends back the HTML/JSON response.
+  5. Nginx sends the response back to the user's browser.
+
+
+STEP 6: CLOUDFLARE — DNS ROUTING & CDN LAYER
+--------------------------------------------------------------------------------
+  Cloudflare sits BETWEEN the user's browser and your CapRover server.
+
+  6.1 DNS CONFIGURATION
+  --------------------------------
+  In your Cloudflare Dashboard → DNS Settings, you have records like:
+
+  ┌────────────────────────────────────────────────────────┐
+  │  Type    Name                Value              Proxy  │
+  │  ──────  ──────────────────  ──────────────────  ───── │
+  │  A       krishnatent.com     103.XX.XX.XX       ☁ ON  │
+  │  A       dev.krishnatent.com 103.XX.XX.XX       ☁ ON  │
+  │  A       api.krishnatent.com 103.XX.XX.XX       ☁ ON  │
+  │  A       *.krishnatent.com   103.XX.XX.XX       ☁ ON  │
+  └────────────────────────────────────────────────────────┘
+
+  `103.XX.XX.XX` = Your VPS/CapRover Server IP Address.
+
+  6.2 WHAT CLOUDFLARE DOES IN THE BACKGROUND
+  --------------------------------
+  When a user types `dev.krishnatent.com` in their browser:
+
+  1. Browser asks DNS: "What is the IP of dev.krishnatent.com?"
+  2. Cloudflare DNS responds with Cloudflare's OWN edge server IP
+     (NOT your server's real IP — this is the proxy/CDN layer).
+  3. User's browser connects to Cloudflare's nearest edge server
+     (e.g., Mumbai, Singapore, Frankfurt — closest to the user).
+  4. Cloudflare checks its cache:
+     - If the page/asset is CACHED → Cloudflare serves it directly (fast!).
+     - If NOT cached → Cloudflare forwards the request to your CapRover server.
+  5. Your CapRover Nginx receives the request → routes to Docker Container.
+  6. Container generates the response → sends back to Cloudflare.
+  7. Cloudflare caches static assets (JS, CSS, images) for next time.
+  8. Cloudflare sends the response to the user's browser.
+
+  6.3 CLOUDFLARE SSL/TLS
+  --------------------------------
+  - Cloudflare provides FREE SSL certificates for your domain.
+  - Mode: "Full (Strict)" — encrypted from Browser → Cloudflare → Server.
+  - CapRover also has its own Let's Encrypt SSL or Cloudflare Origin Cert.
+  - This means traffic is encrypted end-to-end.
+
+
+================================================================================
+SECTION 2: DEV BRANCH vs PRODUCTION BRANCH DEPLOYMENT
+================================================================================
+
+  BRANCH-BASED DEPLOYMENT STRATEGY:
+
+  ┌────────────────────────────────────────────────────────┐
+  │  GitLab Branch     CapRover App        Domain          │
+  │  ──────────────    ──────────────      ──────────────  │
+  │  dev               krishna-frontend    dev.domain.com  │
+  │  dev               krishna-backend     api-dev.domain  │
+  │  main / production krishna-prod-fe     domain.com      │
+  │  main / production krishna-prod-be     api.domain.com  │
+  └────────────────────────────────────────────────────────┘
+
+  - Push to `dev` branch → CapRover builds DEV app → `dev.krishnatent.com`
+  - Push to `main` branch → CapRover builds PROD app → `krishnatent.com`
+  - Each branch has its OWN CapRover app, OWN Docker container, OWN domain.
+  - They share the same VPS but run as isolated containers.
+
+
+================================================================================
+SECTION 3: COMPLETE END-TO-END VISUAL FLOW (ASCII DIAGRAM)
+================================================================================
+
+  DEVELOPER MACHINE
+       │
+       │  $ git push origin dev
+       │
+       ▼
+  ┌──────────┐
+  │  GITLAB   │  (Stores Source Code)
+  │  dev branch│
+  └────┬─────┘
+       │
+       │  Webhook POST → /api/v2/user/apps/webhooks/triggerbuild
+       │  (OR manual Force Build from CapRover Dashboard)
+       │
+       ▼
+  ┌──────────────────────────────────────────────────┐
+  │                   CAPROVER SERVER (VPS)           │
+  │                                                   │
+  │  1. git pull (fetch latest dev code from GitLab)  │
+  │  2. docker build (read Dockerfile, install deps,  │
+  │     compile TypeScript, build Next.js)             │
+  │  3. docker run (start new container)               │
+  │  4. Health Check (wait for HTTP 200)               │
+  │  5. Nginx Proxy Swap (old → new container)         │
+  │                                                   │
+  │  ┌─────────────┐    ┌─────────────┐               │
+  │  │ Frontend    │    │ Backend     │               │
+  │  │ Container   │    │ Container   │               │
+  │  │ Next.js     │    │ Express.js  │               │
+  │  │ :3000       │    │ :5000       │               │
+  │  └──────┬──────┘    └──────┬──────┘               │
+  │         │                  │                       │
+  │  ┌──────┴──────────────────┴──────┐               │
+  │  │        NGINX REVERSE PROXY      │               │
+  │  │  dev.domain.com → :3000         │               │
+  │  │  api-dev.domain.com → :5000     │               │
+  │  └────────────────┬───────────────┘               │
+  └───────────────────┼───────────────────────────────┘
+                      │
+                      │  HTTPS Response
+                      │
+                      ▼
+  ┌──────────────────────────────────────────┐
+  │            CLOUDFLARE (CDN & DNS)        │
+  │                                          │
+  │  1. DNS Resolution (domain → edge IP)    │
+  │  2. SSL/TLS Termination                  │
+  │  3. CDN Cache (JS, CSS, Images)          │
+  │  4. DDoS Protection & WAF Firewall       │
+  │  5. Forward to CapRover Origin Server    │
+  └──────────────────┬───────────────────────┘
+                     │
+                     │  HTTPS Response (Cached or Fresh)
+                     │
+                     ▼
+  ┌──────────────────────────────────────────┐
+  │         USER'S BROWSER                   │
+  │                                          │
+  │  dev.krishnatent.com                     │
+  │  Renders Next.js Pages                   │
+  │  Calls api-dev.krishnatent.com for Data  │
+  └──────────────────────────────────────────┘
+
+
+================================================================================
+SECTION 4: ENVIRONMENT VARIABLES & SECRETS FLOW
+================================================================================
+
+  Environment variables are NOT stored in GitLab code. They are configured
+  separately in CapRover Dashboard:
+
+  CapRover Dashboard → App → App Configs → Environmental Variables:
+
+  Frontend (.env):
+  ┌──────────────────────────────────────────────────────┐
+  │  NEXT_PUBLIC_API_URL=https://api-dev.krishnatent.com │
+  │  NEXT_PUBLIC_SOCKET_URL=wss://api-dev.krishnatent.com│
+  └──────────────────────────────────────────────────────┘
+
+  Backend (.env):
+  ┌──────────────────────────────────────────────────────┐
+  │  MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb │
+  │  JWT_SECRET=your-secret-key-here                     │
+  │  CLOUDINARY_URL=cloudinary://api_key:secret@cloud    │
+  │  PORT=5000                                           │
+  │  NODE_ENV=development                                │
+  └──────────────────────────────────────────────────────┘
+
+  These env vars are injected INTO the Docker Container at runtime.
+  They are NEVER committed to Git or exposed in source code.
+
+
+================================================================================
+SECTION 5: MONGODB DATABASE — WHERE DOES DATA LIVE?
+================================================================================
+
+  MongoDB is hosted separately (NOT on your CapRover VPS):
+
+  Option A: MongoDB Atlas (Cloud Hosted)
+  - Database lives on MongoDB's cloud servers (AWS/GCP/Azure).
+  - Your Express.js backend connects via connection string (MONGODB_URI).
+  - Data is replicated across 3 nodes for high availability.
+
+  Option B: Self-Hosted MongoDB on VPS
+  - MongoDB runs as another Docker Container on your CapRover VPS.
+  - Data is stored on the VPS disk (/var/lib/mongodb).
+
+  Connection Flow:
+  User Request → Cloudflare → CapRover Nginx → Express Container → MongoDB Atlas
+                                                      │
+                                                      ▼
+                                               Read/Write Data
+
+
+================================================================================
+SECTION 6: WHAT HAPPENS WHEN DEPLOYMENT FAILS?
+================================================================================
+
+  If the Docker build fails (e.g., TypeScript error, missing dependency):
+  1. CapRover logs the error in the build log.
+  2. The OLD container keeps running (users see the previous version).
+  3. NO downtime — the failed build is simply discarded.
+  4. Developer checks CapRover Dashboard → Build Logs → Fixes the error.
+  5. Pushes a fix to GitLab → CapRover rebuilds automatically.
+
+  If the container starts but crashes:
+  1. CapRover's health check fails (no HTTP 200 response).
+  2. CapRover keeps the OLD container running.
+  3. Marks the deployment as FAILED in the dashboard.
+
+
+================================================================================
+SECTION 7: SUMMARY — ONE-LINE FLOW
+================================================================================
+
+  git push → GitLab → Webhook → CapRover → Docker Build → Container Start →
+  Nginx Swap → Cloudflare DNS/CDN → User Browser = LIVE SITE
+
+================================================================================
+  END OF DEPLOYMENT PIPELINE FLOW GUIDE
+================================================================================

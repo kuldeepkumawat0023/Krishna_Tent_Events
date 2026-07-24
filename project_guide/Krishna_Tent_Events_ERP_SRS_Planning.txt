@@ -1,0 +1,663 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - MASTER SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+================================================================================
+  Business: Krishna Tent & Events (Single Owner ERP)
+  Infrastructure: 4 Warehouses / Godowns (Main Godown, Jaipur Godown, 
+                 Lighting Godown, Resort Store)
+  Backbone Philosophy: 
+  WAREHOUSE -> AVAILABLE STOCK -> EVENT BOOKING -> RESERVATION -> LOADING 
+  -> DISPATCH -> SITE SETUP -> RETURN -> VERIFICATION -> AVAILABLE AGAIN
+  Document Version: 2.0 (Master Production SRS Specification)
+================================================================================
+
+
+================================================================================
+SECTION 1: EXECUTIVE SUMMARY & SYSTEM SCOPE
+================================================================================
+1.1 PROJECT PURPOSE
+Krishna Tent & Events ERP is a warehouse-centric event management system designed 
+specifically for single-owner operations. It manages inventory across 4 physical godowns, 
+tracks live material movement across event execution stages, handles single and corporate 
+customer accounts with credit limits, automates financial ledgers (Cashbook/Bankbook), 
+and provides real-time business insights to the owner.
+
+1.2 NON-SAAS MANDATE
+This system is strictly a single-tenant enterprise solution. It contains:
+- NO SaaS multi-company registration or subscription plans.
+- NO multi-tenant database partitioning.
+- Direct single-owner control with role-based access for staff.
+
+1.3 CORE ERP BACKBONE PHILOSOPHY
+Inventory stock availability across 4 physical warehouses directly drives event quotation, 
+booking confirmation, multi-godown material reservation, vehicle loading, site execution, 
+packing return, godown verification, and financial profit & loss calculation.
+
+
+================================================================================
+SECTION 2: TECHNICAL ARCHITECTURE & TECH STACK
+================================================================================
+2.1 APPLICATION TECH STACK
+- Frontend Framework: Next.js 16 (v16.2.5, App Router) + TypeScript
+- Styling & Components: Tailwind CSS v4 + shadcn/ui components
+- State & Data Fetching: React Context (Auth/Theme) + SWR Client Hooks
+- Backend API Framework: Node.js + Express.js (MVC Architecture)
+- Database & ODM: MongoDB + Mongoose ODM (43 Collections)
+- Authentication: JWT (JSON Web Tokens) + bcrypt password hashing + HTTP-only cookies
+- Storage Service: Multer + Cloudinary (Image & PDF storage)
+- AI Intelligence Engine: DeepSeek API (Theme suggestions & budget calculation)
+- Real-time Engine: Socket.io (Live stock alerts & dispatch tracking)
+
+2.2 APPLICATION LAYOUT RULE
+- 100% Edge-to-Edge Fluid Width (`w-full max-w-full px-4 py-4 md:px-6 md:py-6`).
+- NO fixed width caps (`max-w-7xl`).
+- Responsive across Mobile (<640px), Tablet (640-1024px), Laptop (1024-1536px), and Ultra-Wide (>1536px).
+
+
+================================================================================
+SECTION 3: USER ROLES & ROLE-BASED ACCESS CONTROL (RBAC) MATRIX
+================================================================================
+The system supports 8 distinct user roles:
+
+| Role | Dashboard | CRM | Quotation | Booking | Warehouse | Inventory | Dispatch | Finance | Reports | Settings |
+|------|-----------|-----|-----------|---------|-----------|-----------|----------|---------|---------|----------|
+| Owner | ✅ Full | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Admin | ✅ Full | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Manager | ✅ Limited | ✅ | ✅ | ✅ | ✅ View | ✅ View | ✅ | ❌ | ✅ Limited | ❌ |
+| Store Manager | ✅ Warehouse | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ Warehouse | ❌ |
+| Accountant | ✅ Finance | ❌ | ❌ | ✅ View | ❌ | ❌ | ❌ | ✅ | ✅ Finance | ❌ |
+| Supervisor | ✅ Events | ❌ | ❌ | ✅ View | ❌ | ❌ | ✅ Site | ❌ | ❌ | ❌ |
+| Driver | ✅ Dispatch | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Delivery | ❌ | ❌ | ❌ |
+| Staff | ✅ Tasks | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+
+================================================================================
+SECTION 4: COMPLETE FORM FIELDS SPECIFICATION (ALL 30+ FORMS)
+================================================================================
+
+4.1 USER LOGIN FORM (`LoginForm.tsx`)
+- Username / Email: Text | Required | Valid Email / Phone
+- Password: Password | Required | Min 6 chars
+- Remember Me: Checkbox | Optional | Default: false
+
+4.2 SETUP WIZARD FORM (`SetupWizardForm.tsx`)
+- Company Name: Text | Required | e.g., Krishna Tent & Events
+- Owner Full Name: Text | Required
+- Phone Number: Text | Required | 10 digits
+- GSTIN Number: Text | Optional | Format: 08AAAAA0000A1Z5
+- Primary Warehouse Name: Text | Required | Default: Main Warehouse
+- Additional Godown 1: Text | Optional | Default: Jaipur Warehouse
+- Additional Godown 2: Text | Optional | Default: Lighting Warehouse
+- Additional Godown 3: Text | Optional | Default: Resort Store
+
+4.3 ITEM MASTER FORM (`ItemForm.tsx`)
+- Category ID: Dropdown | Required | Select from Category DB
+- Item Name: Text | Required | e.g., Plastic Chair (White)
+- SKU Code: Text | Required | Auto-generated or manual (e.g., CHR-001)
+- Unit of Measure: Select | Required | Nos / Sq Ft / Meters / Sets / PCs
+- Purchase Cost: Number | Required | Cost per unit (e.g., 450.00)
+- Rental Cost per Day: Number | Required | Rate charged per event day (e.g., 25.00)
+- Minimum Stock Threshold: Number | Required | Alert trigger limit (e.g., 100)
+- Item Description: Textarea | Optional
+- Item Image Upload: File | Optional | Cloudinary upload
+
+4.4 CATEGORY FORM (`CategoryForm.tsx`)
+- Category Name: Text | Required | e.g., Seating & Chairs, Tents & Canopies, Lighting
+- Category Code: Text | Required | e.g., SEAT, TENT, LIGHT
+- Parent Category ID: Dropdown | Optional | For sub-categories
+- Description: Textarea | Optional
+
+4.5 WAREHOUSE FORM (`WarehouseForm.tsx`)
+- Warehouse Name: Text | Required | e.g., Jaipur Godown
+- Warehouse Code: Text | Required | e.g., JPR-GDW
+- Location Address: Textarea | Required
+- In-charge Manager ID: Dropdown | Required | Select from User DB
+- Contact Phone: Text | Required | 10 digits
+- Storage Capacity (Sq Ft): Number | Optional
+
+4.6 ZONE MANAGER FORM (`ZoneManager.tsx`)
+- Warehouse ID: Dropdown | Required
+- Zone Name: Text | Required | e.g., Zone A (Chairs & Seating), Zone B (Lighting)
+- Zone Code: Text | Required | e.g., ZA, ZB
+
+4.7 RACK MANAGER FORM (`RackManager.tsx`)
+- Zone ID: Dropdown | Required
+- Rack Number / Code: Text | Required | e.g., Rack A1, Shelf B2
+- Max Load Capacity (Kg): Number | Optional
+
+4.8 CUSTOMER FORM (`CustomerForm.tsx`)
+- Customer Type: Select | Required | Retail Individual / Corporate Agency / Hotel / Resort
+- Customer Full Name / Business Name: Text | Required
+- Contact Person Name: Text | Required (If Corporate)
+- Phone Number: Text | Required | 10 digits
+- Email Address: Text | Optional
+- Alternate Phone: Text | Optional
+- Billing Address: Textarea | Required
+- GSTIN Number: Text | Optional | Required for Corporate B2B
+- Credit Limit Amount (Rs): Number | Optional | Default: 0.00 (e.g., 10,00,000 for Agency)
+- Payment Term Days: Number | Optional | Default: 0 (e.g., 30 Days Net)
+- Contract B2B Discount %: Number | Optional | Default: 0.00%
+- Notes / Remarks: Textarea | Optional
+
+4.9 LEAD FORM (`LeadForm.tsx`)
+- Lead Source: Select | Required | Phone Call / Walk-in / Website / Reference
+- Customer Name: Text | Required
+- Phone Number: Text | Required
+- Event Type: Select | Required | Wedding, Birthday, Corporate, Festival, Resort Function
+- Proposed Event Date: Date | Required
+- Expected Budget (Rs): Number | Optional
+- Lead Stage: Select | Required | New / Contacted / Site Visit / Quotation / Booked / Lost
+- Assigned Staff ID: Dropdown | Optional
+
+4.10 SITE VISIT FORM (`SiteVisitForm.tsx`)
+- Customer ID / Lead ID: Dropdown | Required
+- Venue Address: Textarea | Required
+- Visit Date & Time: DateTime | Required
+- Assigned Supervisor ID: Dropdown | Required
+- Site Dimensions (Length x Width x Height): Text | Optional | e.g., 100x50x15 Ft
+- Power Supply Available: Select | Required | 3-Phase / 1-Phase / Generator Required
+- Vehicle Access Road: Select | Required | Easy Heavy Truck / Medium Commercial / Narrow Manual
+- Special Notes & Requirements: Textarea | Optional
+
+4.11 QUOTATION FORM (`QuotationForm.tsx`)
+- Customer ID: Dropdown | Required
+- Event Type: Text | Required
+- Event Start Date & Time: DateTime | Required
+- Event End Date & Time: DateTime | Required
+- Venue Location Address: Textarea | Required
+- Items List: Array of Objects:
+  ├── Item ID: Dropdown | Required
+  ├── Quantity Requested: Number | Required
+  ├── Days Count: Number | Required
+  ├── Unit Rental Price (Rs): Number | Required (Auto-filled, editable)
+  ├── Line Total (Rs): Number | Calculated
+  └── Stock Check Result: Badge | Auto-Check (Available across 4 godowns)
+- Transport / Freight Charges (Rs): Number | Optional | Default: 0.00
+- Labour & Setup Charges (Rs): Number | Optional | Default: 0.00
+- Discount Amount (Rs): Number | Optional | Default: 0.00
+- GST Rate (%): Select | Required | 0% / 5% / 12% / 18%
+- Grand Total (Rs): Number | Calculated
+- Terms & Conditions: Textarea | Optional
+
+4.12 BOOKING FORM (`BookingForm.tsx`)
+- Quotation ID: Dropdown | Required | Select approved quotation
+- Customer ID: Dropdown | Required
+- Advance Payment Amount (Rs): Number | Required | e.g., 30% - 50% of total
+- Payment Mode: Select | Required | Cash / UPI / NEFT / Cheque
+- Payment Reference Number: Text | Optional (Required if UPI/NEFT)
+- Contract Signed: Checkbox | Required
+- Booking Status: Select | Required | Confirmed
+
+4.13 INTER-GODOWN STOCK TRANSFER FORM (`StockTransferForm.tsx`)
+- Source Warehouse ID: Dropdown | Required
+- Destination Warehouse ID: Dropdown | Required
+- Item ID: Dropdown | Required
+- Transfer Quantity: Number | Required
+- Reason for Transfer: Select | Required | Event Requirement / Stock Balancing / Repair
+- Dispatch Date: Date | Required
+- Status: Select | Required | Pending / Approved / Dispatched / Received
+
+4.14 MATERIAL RESERVATION FORM (`ReservationForm.tsx`)
+- Booking ID: Dropdown | Required
+- Multi-Godown Split Matrix: Array:
+  ├── Main Warehouse Qty: Number
+  ├── Jaipur Warehouse Qty: Number
+  ├── Lighting Warehouse Qty: Number
+  └── Resort Store Qty: Number
+- Stock Lock Expiry Date: Date | Required
+- Reservation Status: Select | Required | Locked / Released
+
+4.15 LOADING SLIP FORM (`LoadingChecklist.tsx`)
+- Dispatch ID / Booking ID: Dropdown | Required
+- Warehouse ID: Dropdown | Required
+- Driver ID / Vehicle ID: Dropdown | Required
+- Item Checklist Array:
+  ├── Item ID
+  ├── Reserved Qty
+  ├── Loaded Qty (Manually Verified)
+  └── Discrepancy Remarks
+
+4.16 DISPATCH FORM (`DispatchForm.tsx`)
+- Booking ID: Dropdown | Required
+- Source Warehouse ID: Dropdown | Required
+- Vehicle Number: Text | Required | e.g., RJ-14-GA-1234
+- Driver Name & Phone: Text | Required
+- E-Way Bill Number: Text | Optional
+- Outward Gate Pass Number: Text | Auto-Generated
+- Dispatch Date & Time: DateTime | Required
+- Status: Select | Required | Loading / In-Transit / Delivered
+
+4.17 SITE RECEIPT FORM (`SiteReceiptForm.tsx`)
+- Dispatch ID: Dropdown | Required
+- Received Date & Time: DateTime | Required
+- Supervisor Signature / Upload: Image | Optional
+- Material Condition at Site: Select | Required | OK / Damaged in Transit / Shortage
+- Site Remarks: Textarea | Optional
+
+4.18 RETURN PACKING CHECKLIST FORM (`PackingChecklist.tsx`)
+- Event ID / Booking ID: Dropdown | Required
+- Packing Date & Time: DateTime | Required
+- Supervisor ID: Dropdown | Required
+- Item Return Checklist Array:
+  ├── Item ID
+  ├── Dispatched Qty
+  ├── Packed Return Qty
+  └── Shortage Count
+
+4.19 RETURN VERIFICATION FORM (`VerificationForm.tsx`)
+- Return Vehicle ID / Booking ID: Dropdown | Required
+- Destination Warehouse ID: Dropdown | Required
+- Inspection Date: Date | Required
+- Verified Item Categorization Array:
+  ├── Item ID
+  ├── Total Returned Qty
+  ├── Good Condition Qty (Returned to Available Stock)
+  ├── Damaged Qty (Needs Repair)
+  ├── Unrepairable Scrap Qty
+  └── Missing Qty (Billed to Customer)
+- Store Manager Remarks: Textarea | Required
+
+4.20 REPAIR REQUEST FORM (`RepairRequest.tsx`)
+- Item ID: Dropdown | Required
+- Damaged Quantity: Number | Required
+- Warehouse ID: Dropdown | Required
+- Damage Description: Textarea | Required
+- Assigned Repair Vendor ID: Dropdown | Optional
+- Estimated Repair Cost (Rs): Number | Optional
+- Status: Select | Required | Pending / Approved / Sent to Vendor / Completed
+
+4.21 SCRAP REQUEST FORM (`ScrapRequest.tsx`)
+- Item ID: Dropdown | Required
+- Scrap Quantity: Number | Required
+- Warehouse ID: Dropdown | Required
+- Reason for Scrap: Textarea | Required
+- Estimated Scrap Sale Value (Rs): Number | Optional
+- Status: Select | Required | Pending / Approved / Sold
+
+4.22 PAYMENT FORM (`PaymentForm.tsx`)
+- Customer ID: Dropdown | Required
+- Booking ID: Dropdown | Optional (Required for single event payment)
+- Payment Date: Date | Required
+- Amount Received (Rs): Number | Required
+- Payment Method: Select | Required | Cash / UPI / NEFT / RTGS / Cheque
+- Transaction Ref Number: Text | Optional
+- Payment Type: Select | Required | Advance / Final Settlement / Bulk Allocation / Refund
+- Bank Account / Cashbook Select: Dropdown | Required
+
+4.23 BULK PAYMENT ALLOCATION FORM (`BulkAllocationForm.tsx`)
+- Corporate Customer ID: Dropdown | Required
+- Total Lump-Sum Amount (Rs): Number | Required (e.g., 5,00,000)
+- Payment Method & Ref: Text | Required
+- Invoice Distribution Table:
+  ├── Invoice #101 Amount Allocated (Rs)
+  ├── Invoice #102 Amount Allocated (Rs)
+  └── Invoice #103 Amount Allocated (Rs)
+
+4.24 EXPENSE FORM (`ExpenseForm.tsx`)
+- Expense Category: Select | Required | Labour / Transport Fuel / Catering / Equipment Hire / Maintenance / Misc
+- Booking ID / Event ID: Dropdown | Optional (Link expense to specific event for P&L)
+- Warehouse ID: Dropdown | Optional
+- Amount Paid (Rs): Number | Required
+- Paid To Person / Vendor: Text | Required
+- Payment Mode: Select | Required | Cash / UPI / Bank
+- Voucher / Receipt Upload: File | Optional
+- Notes: Textarea | Optional
+
+4.25 PURCHASE ORDER FORM (`PurchaseOrderForm.tsx`)
+- Vendor ID: Dropdown | Required
+- Order Date: Date | Required
+- Expected Delivery Date: Date | Required
+- Target Warehouse ID: Dropdown | Required
+- Purchased Items Array:
+  ├── Item ID
+  ├── Quantity
+  ├── Unit Purchase Price (Rs)
+  └── Total Amount (Rs)
+- Grand Total (Rs): Number | Calculated
+- Status: Select | Required | Draft / Sent to Vendor / Partial Delivery / Completed
+
+4.26 GOODS RECEIVE NOTE FORM (GRN) (`GoodsReceiptForm.tsx`)
+- Purchase Order ID: Dropdown | Required
+- Warehouse ID: Dropdown | Required
+- Received Date: Date | Required
+- Inspected Items Array:
+  ├── Item ID
+  ├── Ordered Qty
+  ├── Received Qty
+  ├── Accepted Qty (+Added to Inventory Stock)
+  └── Rejected Qty
+- Invoice Photo / PDF Upload: File | Optional
+
+4.27 VENDOR FORM (`VendorForm.tsx`)
+- Vendor Business Name: Text | Required | e.g., ABC Furniture Works
+- Vendor Type: Select | Required | Material Supplier / Repair Specialist / Vehicle Transporter / Generator Hire
+- Contact Person: Text | Required
+- Phone Number: Text | Required | 10 digits
+- GSTIN Number: Text | Optional
+- Bank Name & Account No: Text | Optional
+- IFSC Code: Text | Optional
+- Address: Textarea | Optional
+
+4.28 STAFF FORM (`StaffForm.tsx`)
+- Employee Full Name: Text | Required
+- Role Title: Select | Required | Manager / Store Incharge / Supervisor / Labour / Driver
+- Phone Number: Text | Required
+- Daily Wage / Monthly Salary (Rs): Number | Required
+- Aadhaar Card Number: Text | Required
+- Assigned Warehouse ID: Dropdown | Required
+- AUTOMATED TRIGGER: Upon creation, system automatically initializes a 1-on-1 Chat Conversation between Owner/Manager and new Staff Member and posts an automated Welcome Message into the chat stream.
+
+4.29 VEHICLE FORM (`VehicleForm.tsx`)
+- Vehicle Registration Number: Text | Required | e.g., RJ-14-GA-1234
+- Vehicle Type: Select | Required | Heavy Commercial Truck / Pickup Bolero / Tempo / Mini Van
+- Owner Type: Select | Required | Owned / Hired Transporter
+- Driver Name: Text | Optional
+- Fitness Certificate Expiry Date: Date | Optional
+- Insurance Expiry Date: Date | Optional
+
+4.30 RESORT ROOM BOOKING FORM (`RoomBookingForm.tsx`)
+- Customer ID: Dropdown | Required
+- Room ID / Deluxe Room Nos: Dropdown / Select | Required | e.g., Deluxe 101 to 105
+- Check-In Date & Time: DateTime | Required
+- Check-Out Date & Time: DateTime | Required
+- Total Guests Count: Number | Required
+- Room Rate per Night (Rs): Number | Required
+- Linked Event Booking ID: Dropdown | Optional (Link decor/tent material to room package)
+- Status: Select | Required | Reserved / Checked-In / Checked-Out / Billed
+
+4.31 REAL-TIME INTERNAL CHAT & MEDIA FORM (`ChatMessageWindow.tsx`, `MediaAttachmentModal.tsx`, `VoiceRecorder.tsx`)
+- Receiver User ID: Dropdown / User Select | Required | Select staff / manager / owner to chat
+- Message Text Content: Textarea | Required (unless file or voice note attached)
+- Image / Document Attachment: File | Optional | Image / PDF / Excel upload via Cloudinary
+- Voice Note Audio Recording: Audio File | Optional | Live mic voice note recording via Web Audio API (`VoiceRecorder.tsx`), stored on Cloudinary & played via WhatsApp-style audio player bubble (`AudioPlayerBubble.tsx`).
+- Tagged Event / Booking ID: Dropdown | Optional | Link message to specific Booking ID
+- Message Status: Auto | Sent / Delivered / Read
+- AUTOMATED INVITE SYSTEM MESSAGE: Auto-posted when a new team member is added/invited to the ERP portal ("Welcome to Krishna Tent & Events! 👋 You have been assigned to Jaipur Warehouse as Supervisor.")
+
+
+================================================================================
+SECTION 5: 8 BUSINESS DEPARTMENT WORKFLOWS & OPERATIONAL ASCII DIAGRAMS
+================================================================================
+
+5.1 DEPARTMENT 1: WAREHOUSE STOCK & REPLENISHMENT
+  Jaipur Warehouse Plastic Chairs < 300 Min Threshold
+        │
+        ▼
+  Store Manager creates Purchase Request
+        │
+        ▼
+  Owner Approval -> Purchase Order (PO) -> Vendor Delivery
+        │
+        ▼
+  Goods Receive Note (GRN) & Quality Inspection
+        │
+        ▼
+  Warehouse Entry (+300 Stock) -> Available Stock Updated
+
+5.2 DEPARTMENT 2: NEW ITEM MASTER & OPENING STOCK
+  Owner adds New Item (P4 LED Wall)
+        │
+        ▼
+  Fill Item Details (Category, Name, SKU, Purchase/Rental Rate, Min Stock)
+        │
+        ▼
+  Save Item -> Select Godowns (Main & Lighting Godowns) -> Set Opening Stock
+        │
+        ▼
+  Ready for Sales Quotations
+
+5.3 DEPARTMENT 3: INTER-WAREHOUSE STOCK TRANSFER
+  Main Warehouse: 1200 Chairs  |  Jaipur Warehouse: 80 Chairs
+        │
+        ▼
+  Transfer Request (300 Chairs Main -> Jaipur) -> Owner Approval
+        │
+        ▼
+  Loading Slip -> Dispatch (Main: 900) -> Receive at Jaipur (Jaipur: 380)
+        │
+        ▼
+  Atomic Dual-Stock Ledger Update
+
+5.4 DEPARTMENT 4: REPAIR MANAGEMENT
+  15 Broken Chairs identified during Return Verification
+        │
+        ▼
+  Store Manager logs Repair Request -> Owner Approval
+        │
+        ▼
+  Handover to Repair Vendor (Outward Gate Pass)
+        │
+        ▼
+  Repair Complete -> Re-entry to Available Stock (+15 Chairs)
+
+5.5 DEPARTMENT 5: SCRAP & WRITE-OFF
+  5 Unrepairable Chairs
+        │
+        ▼
+  Scrap Request -> Owner Approval -> Remove from Active Count (-5)
+        │
+        ▼
+  Scrap Sale Entry (Rs. 500) -> Cashbook Credited + Rs. 500
+
+5.6 DEPARTMENT 6: PURCHASE MANAGEMENT
+  Vendor PO Creation -> Goods Delivery -> GRN Entry -> Invoice Upload
+        │
+        ▼
+  Advance/Final Payment -> Inventory Stock Updated -> Vendor Ledger Updated
+
+5.7 DEPARTMENT 7: EVENT ORDER LIFECYCLE (MAIN REVENUE ENGINE)
+  Customer Inquiry -> CRM Lead -> Site Visit & Dimensions
+        │
+        ▼
+  Quotation Builder (Live Multi-Godown Stock Check across 4 godowns)
+        │
+        ▼
+  Booking Confirmation -> Advance Payment Received -> Contract Signed
+        │
+        ▼
+  Material Reservation (Multi-Godown Auto-Split & Stock Locking)
+        │
+        ▼
+  Loading Slip -> Checklist Load Check -> Truck Dispatch
+        │
+        ▼
+  Site Receipt -> Setup Photos -> Staff Attendance -> Event Execution
+        │
+        ▼
+  Packing Checklist -> Vehicle Return Dispatch
+        │
+        ▼
+  Godown Verification (Good -> Available | Damaged -> Repair | Missing -> Billed)
+        │
+        ▼
+  Final GST Tax Invoice -> Final Payment -> Event Net P&L Calculation
+
+5.8 DEPARTMENT 8: RESORT ROOM & VENUE BOOKING MANAGEMENT
+  Customer Enquiry -> Room Selection & Availability -> Rate Calculation
+        │
+        ▼
+  Booking & Advance Entry -> Guest Check-In -> Linked Material Movement
+        │
+        ▼
+  Event Execution -> Guest Check-Out -> Final Integrated Billing
+
+
+================================================================================
+SECTION 6: SINGLE VS CORPORATE CUSTOMER ENGINE & CREDIT CONTROL
+================================================================================
+6.1 SINGLE / RETAIL CUSTOMER ENGINE
+- Designed for individual clients booking single events (Weddings, Birthdays).
+- Isolated single event ledger.
+- Account automatically closes upon 100% payment settlement.
+
+6.2 CORPORATE AGENCY & HOTEL ENGINE
+- Designed for event planners, corporate houses, and hotels running 5-10 simultaneous monthly events.
+- Parent Account Profile features:
+  ├── Corporate Credit Limit (e.g., Max Outstanding: Rs. 10,00,000)
+  ├── Credit Term (e.g., 30 Days Net Credit)
+  └── B2B Contract Rate Discount Tier (e.g., 15% automatic discount on quotations)
+- Credit Limit Breach Check: System checks total active balance + new booking amount. If balance > Credit Limit, triggers an alert for Owner Approval.
+- Bulk Payment Allocation: Lump-sum payment (e.g., Rs. 5,00,000 NEFT) allocated across multiple active event invoices.
+- Consolidated Statement of Account & Aging Report.
+
+
+================================================================================
+SECTION 7: DASHBOARD UI ARCHITECTURE & DUAL THEME SPECIFICATIONS
+================================================================================
+7.1 DUAL THEME TOKENS (LIGHT MODE & DARK MODE)
+- Theme Switcher via `ThemeProvider.tsx` and TopNavBar `ThemeToggle.tsx`.
+- Light Canvas: `#F8F9FA` | Dark Canvas: `#09090B`
+- Light Cards: `#FFFFFF` | Dark Cards: `#18181B` (`rounded-2xl shadow-sm border border-slate-100 dark:border-zinc-800`)
+- Brand Accent: Amber Gold (`#D97706` / `#F59E0B`)
+- Primary Action Buttons: Warm Chestnut Brown (`#5C3A21` / `#6B4627`)
+
+7.2 TOP SIDEBAR WAREHOUSE SWITCHER (`WarehouseSwitcher.tsx`)
+- Located at top of sidebar below logo header.
+- Dropdown Options: `All Warehouses (Overview)`, `Main Warehouse`, `Jaipur Warehouse`, `Ajmer Warehouse`, `Jodhpur Warehouse`, `+ Add Godown`.
+- Dynamically filters all KPI cards, tables, inventory charts, dispatches, and return queues to the selected godown.
+
+
+================================================================================
+SECTION 8: MASTER RESTFUL API ENDPOINT INDEX (ALL 29 MODULES)
+================================================================================
+
+1. AUTHENTICATION MODULE (/api/auth)
+   POST   /api/auth/login               User Login (JWT Token)
+   POST   /api/auth/logout              User Logout
+   POST   /api/auth/refresh             Refresh Access Token
+   GET    /api/auth/me                  Get Active User Profile
+
+2. DASHBOARD MODULE (/api/dashboard)
+   GET    /api/dashboard/stats          Get KPI Cards Summary (?warehouseId=xxx)
+   GET    /api/dashboard/today-events   Get Today's Scheduled Events
+   GET    /api/dashboard/alerts         Get Low Stock & Payment Alerts
+
+3. CRM & CUSTOMERS MODULE (/api/crm)
+   GET    /api/crm/leads                List Leads
+   POST   /api/crm/leads                Create Lead
+   GET    /api/crm/customers            List Customers
+   POST   /api/crm/customers            Create Single/Corporate Customer
+   GET    /api/crm/customers/:id/statement Consolidated Account Statement
+   GET    /api/crm/site-visits          List Site Visits
+   POST   /api/crm/site-visits          Schedule Site Visit
+
+4. QUOTATION MODULE (/api/quotations)
+   GET    /api/quotations               List Quotations
+   POST   /api/quotations               Create Quotation
+   POST   /api/quotations/check-stock   Check Stock Availability Across 4 Godowns
+   GET    /api/quotations/:id/pdf       Generate Quotation PDF
+
+5. BOOKING MODULE (/api/bookings)
+   GET    /api/bookings                 List Bookings
+   POST   /api/bookings                 Create Booking from Quotation
+   GET    /api/bookings/:id/agreement   Generate Rental Agreement PDF
+
+6. WAREHOUSE MODULE (/api/warehouses)
+   GET    /api/warehouses               List 4 Warehouses
+   POST   /api/warehouses               Create Warehouse
+   GET    /api/warehouses/:id/zones     List Godown Zones & Racks
+
+7. WAREHOUSE TRANSFER MODULE (/api/warehouse-transfers)
+   GET    /api/warehouse-transfers      List Inter-Godown Transfers
+   POST   /api/warehouse-transfers      Initiate Transfer Request
+   PUT    /api/warehouse-transfers/:id/receive Confirm Receipt
+
+8. INVENTORY MODULE (/api/inventory)
+   GET    /api/inventory/categories     List Categories
+   GET    /api/inventory/items          List Inventory Items Catalog
+   POST   /api/inventory/items          Add New Item & Opening Stock
+   GET    /api/inventory/ledger         View Inventory Stock Movement Ledger
+
+9. RESERVATION MODULE (/api/reservations)
+   GET    /api/reservations             List Reservations
+   POST   /api/reservations             Create Multi-Godown Stock Lock
+
+10. DISPATCH MODULE (/api/dispatches)
+    GET    /api/dispatches              List Dispatches
+    POST   /api/dispatches              Create Dispatch & Gate Pass
+    GET    /api/dispatches/:id/loading-slip Generate Loading Slip
+
+11. EVENT EXECUTION MODULE (/api/events)
+    GET    /api/events                  List Active Events
+    POST   /api/events/site-receipt     Confirm Site Receipt
+    POST   /api/events/photos           Upload Setup Photos
+
+12. RETURN MODULE (/api/returns)
+    GET    /api/returns                 List Returns
+    POST   /api/returns/packing         Create Return Packing Checklist
+
+13. VERIFICATION MODULE (/api/verifications)
+    GET    /api/verifications           List Godown Inspection Reports
+    POST   /api/verifications           Verify Return & Categorize (Good/Damaged/Missing)
+
+14. REPAIR MODULE (/api/repairs)
+    GET    /api/repairs                 List Repairs
+    POST   /api/repairs                 Create Repair Request
+
+15. SCRAP MODULE (/api/scraps)
+    GET    /api/scraps                  List Scrap Requests
+    POST   /api/scraps                  Create Scrap Sale Request
+
+16. PAYMENT MODULE (/api/payments)
+    GET    /api/payments                List Payments
+    POST   /api/payments                Record Advance/Final Payment
+    POST   /api/payments/bulk-allocation Bulk Payment Distribution across Invoices
+
+17. EXPENSE MODULE (/api/expenses)
+    GET    /api/expenses                List Operational Expenses
+    POST   /api/expenses                Log Event Expense
+
+18. FINANCE & LEDGERS MODULE (/api/finance)
+    GET    /api/finance/cashbook        Get Cashbook Ledger
+    GET    /api/finance/bankbook        Get Bankbook Ledger
+    GET    /api/finance/pnl             Get Event-wise & Overall P&L Statement
+
+19. INVOICE MODULE (/api/invoices)
+    GET    /api/invoices                List Invoices
+    POST   /api/invoices/generate       Generate Final GST Tax Invoice
+
+20. PURCHASE MODULE (/api/purchases)
+    GET    /api/purchases               List Purchases & POs
+    POST   /api/purchases/po            Create Purchase Order
+
+21. VENDOR MODULE (/api/vendors)
+    GET    /api/vendors                 List Vendors & Dues
+    POST   /api/vendors                 Add Vendor
+
+22. STAFF MODULE (/api/staff)
+    GET    /api/staff                   List Staff Employees
+    POST   /api/staff/attendance        Log Daily & Event Attendance
+
+23. VEHICLE MODULE (/api/vehicles)
+    GET    /api/vehicles                List Vehicles Fleet
+    POST   /api/vehicles                Add Vehicle
+
+24. REPORT MODULE (/api/reports)
+    GET    /api/reports/:type           Generate 16 ERP Report Types
+
+25. NOTIFICATION MODULE (/api/notifications)
+    GET    /api/notifications           List Notifications
+    PUT    /api/notifications/read-all  Mark All Notifications Read
+
+26. SETTINGS MODULE (/api/settings)
+    GET    /api/settings/company        Get Company Profile & Godowns
+    PUT    /api/settings/company        Update Profile Settings
+
+27. AUDIT LOGS MODULE (/api/audit)
+    GET    /api/audit                   View System Audit Trail
+
+28. AI FEATURES MODULE (/api/ai)
+    POST   /api/ai/theme-suggest        DeepSeek AI Theme Suggestion
+    POST   /api/ai/budget-calc          DeepSeek AI Budget Estimator
+
+29. RESORT ROOMS MODULE (/api/rooms)
+    GET    /api/rooms                   List Resort Rooms
+    POST   /api/rooms/booking           Create Room Booking
+
+30. REAL-TIME INTERNAL CHAT MODULE (/api/chat)
+    GET    /api/chat/conversations       Fetch User Conversations List
+    POST   /api/chat/conversations       Start 1-on-1 Conversation
+    GET    /api/chat/messages/:id        Get Chat Messages History
+    POST   /api/chat/messages            Send New Message (Text/Media)
+    POST   /api/chat/upload              Upload Chat Attachment (Cloudinary)
+    PUT    /api/chat/read-all/:id        Mark Conversation Messages Read
+================================================================================
