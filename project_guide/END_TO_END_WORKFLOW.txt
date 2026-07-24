@@ -1,0 +1,522 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - END-TO-END WORKFLOW & RESTful API SPECIFICATION
+================================================================================
+  System: Single-Owner Warehouse-Centric Event ERP (4 Godowns)
+  Target Business: Krishna Tent & Events
+  Core Lifecycle: WAREHOUSE -> STOCK -> CRM -> QUOTATION -> BOOKING -> RESERVATION 
+                  -> DISPATCH -> SITE SETUP -> RETURN -> VERIFICATION -> AVAILABLE
+================================================================================
+
+
+================================================================================
+1. USER ENTRY & FIRST-TIME SETUP WIZARD FLOW
+================================================================================
+
+1.1 OPEN ERP SYSTEM
+    - System opens at URL: http://localhost:3000/login
+    - AuthGuard checks if user is logged in via JWT stored in LocalStorage/Cookies.
+    - If unauthenticated, user is presented with the Login Screen.
+
+1.2 OWNER LOGIN
+    - Form Fields: Email / Username, Password, Remember Me check
+    - API Call: POST /api/auth/login
+    - Response: Returns JWT Access Token, Refresh Token, User Profile, Role & Permissions.
+
+1.3 FIRST-TIME SETUP WIZARD (If Company is not configured)
+    - If System detects company details are missing, redirects to `/setup-wizard`.
+    - Step 1: Company Profile (Name, Owner Name, Phone, Email, Address, GSTIN, Logo upload)
+    - Step 2: 4 Godowns Setup (Main Warehouse, Godown 2, Godown 3, Godown 4 names & locations)
+    - Step 3: Default Categories (Furniture, Lighting, Tents/Decor, Sound/AV, Power/AC)
+    - Step 4: Admin & Staff Accounts Creation
+    - API Call: POST /api/settings/setup-wizard
+    - Redirect: User redirected to Owner Dashboard (`/dashboard`).
+
+
+================================================================================
+2. CUSTOMER & LEAD MANAGEMENT WORKFLOW
+================================================================================
+
+2.1 LEAD CAPTURE & PIPELINE
+    - Flow: New Customer Enquiry (Phone/Walk-in) -> Lead Form Entry -> Pipeline Stage
+    - Lead Stages: New -> Contacted -> Site Visit Scheduled -> Requirement Discussed -> Quotation Sent -> Booked -> Lost
+    - API Endpoints:
+      * GET    /api/crm/leads        (Fetch all leads with search/filter)
+      * POST   /api/crm/leads        (Create new lead)
+      * GET    /api/crm/leads/:id    (Get lead details)
+      * PUT    /api/crm/leads/:id    (Update lead info/status)
+      * DELETE /api/crm/leads/:id    (Delete lead)
+
+2.2 CUSTOMER MANAGEMENT (SINGLE VS CORPORATE / AGENCY)
+    - Once Lead is qualified or booking is initiated, Lead converts to Customer DB.
+    - Single / Retail Customer: One-off individual booking (Wedding, Birthday). Standard retail price list, standalone booking ledger.
+    - Corporate / Agency / Hotel Customer: Running multiple simultaneous bookings (e.g. 5-10 events/month). Features Parent Account, Credit Limit (e.g. Rs. 10,00,000), Credit Term (e.g. 30 Days Net), Contract B2B Discount Tier, Bulk Payment Allocation across multiple invoices, and Credit Limit Breach Alerts.
+    - Form Fields: Customer Name, Customer Type (Retail Individual / Corporate Agency / Hotel / Resort), Phone, Email, Alternate Contact, Billing Address, GST Number, Credit Limit Amount, Payment Term Days, Contract Discount %, Notes
+    - API Endpoints:
+      * GET    /api/crm/customers                  (List paginated customers)
+      * POST   /api/crm/customers                  (Create customer profile)
+      * GET    /api/crm/customers/:id              (Customer detail & multi-event history)
+      * PUT    /api/crm/customers/:id              (Edit customer details & credit terms)
+      * DELETE /api/crm/customers/:id              (Soft delete customer)
+      * GET    /api/crm/customers/:id/statement    (Consolidated Statement of Account across all bookings)
+      * POST   /api/payments/bulk-allocation       (Bulk payment distribution across multiple event invoices)
+
+2.3 SITE VISIT WORKFLOW
+    - Flow: Schedule Visit -> Assign Supervisor -> Visit Site -> Take Dimensions/Photos -> Record Requirements
+    - Form Fields: Customer ID, Event Venue Address, Visit Date & Time, Assigned Supervisor ID, Site Dimensions (Length, Width, Height), Power Supply Available (Yes/No), Vehicle Access (Easy/Difficult), Special Remarks
+    - API Endpoints:
+      * GET    /api/crm/site-visits        (List site visits)
+      * POST   /api/crm/site-visits        (Schedule site visit)
+      * GET    /api/crm/site-visits/:id    (Get visit details)
+      * PUT    /api/crm/site-visits/:id    (Update visit/upload site notes)
+      * DELETE /api/crm/site-visits/:id    (Cancel visit)
+
+
+================================================================================
+3. COMPLETE PAYMENT & FINANCE WORKFLOW
+================================================================================
+
+3.1 ADVANCE PAYMENT (At Booking Confirmation)
+    - Customer pays advance (e.g. 30% - 50% of quotation total).
+    - Payment Form Fields: Booking ID, Customer ID, Payment Date, Amount, Payment Method (Cash/UPI/Bank Transfer/Cheque), Transaction Ref No, Payment Type (Advance), Remarks
+    - Automation: Generates Payment Receipt, auto-posts entry to Cashbook/Bankbook.
+    - API Endpoints:
+      * GET    /api/payments          (List payments)
+      * POST   /api/payments          (Record payment)
+      * GET    /api/payments/:id      (Payment detail & receipt PDF)
+      * PUT    /api/payments/:id      (Update payment record)
+      * DELETE /api/payments/:id      (Void payment)
+
+3.2 EVENT EXPENSE TRACKING
+    - Supervisors/Managers log operational expenses incurred during event setup/dispatch.
+    - Form Fields: Event ID, Expense Category (Labour, Transport/Fuel, Food/Catering, Miscellaneous, Equipment Repair), Amount, Paid To, Payment Mode, Voucher Photo Upload, Notes
+    - API Endpoints:
+      * GET    /api/expenses          (List expenses)
+      * POST   /api/expenses          (Log expense)
+      * GET    /api/expenses/:id      (Expense detail)
+      * PUT    /api/expenses/:id      (Edit expense)
+      * DELETE /api/expenses/:id      (Delete expense)
+
+3.3 VENDOR PAYMENTS
+    - Payments made to third-party vendors for hired equipment or outsourced staff.
+    - API Endpoints:
+      * GET    /api/vendors/:id/payments  (List vendor payment ledger)
+      * POST   /api/payments/vendor       (Make vendor payment)
+
+3.4 FINAL PAYMENT & GST INVOICE GENERATION
+    - After event completion and verification, final balance payment is collected.
+    - Invoice Form Fields: Booking ID, Invoice Date, Due Date, Tax Rates (CGST 9%, SGST 9% or IGST 18%), Discount Amount, Payment Terms, Extra Charges (Damage charges, overtime)
+    - PDF Generation: Downloadable GST Tax Invoice with QR code & bank payment details.
+    - API Endpoints:
+      * GET    /api/invoices           (List invoices)
+      * POST   /api/invoices/generate  (Generate tax invoice)
+      * GET    /api/invoices/:id       (Get invoice detail & PDF)
+      * PUT    /api/invoices/:id       (Update invoice status: Paid/Unpaid)
+      * DELETE /api/invoices/:id       (Cancel invoice)
+
+3.5 CASHBOOK & BANKBOOK LEDGERS
+    - Cashbook: All physical cash incoming (advance/final) and cash outgoing (labour/fuel).
+    - Bankbook: Online UPI, NEFT, Cheque credits & debits.
+    - API Endpoints:
+      * GET    /api/finance/cashbook   (Fetch daily cashbook entries & closing balance)
+      * GET    /api/finance/bankbook   (Fetch daily bankbook entries & reconciliation)
+      * GET    /api/finance/pnl        (Event-wise P&L and overall profit report)
+
+
+================================================================================
+4. END-TO-END EVENT LIFECYCLE WORKFLOW
+================================================================================
+
+STAGE 1: QUOTATION BUILDER & STOCK CHECK
+  - User selects items, quantities, rental duration (start date & end date).
+  - System performs real-time availability check across ALL 4 GODOWNS.
+  - Generates Quotation PDF with itemized costs & terms.
+  - API Endpoints:
+    * GET    /api/quotations                 (List quotations)
+    * POST   /api/quotations                 (Create quotation)
+    * POST   /api/quotations/check-stock     (Check live stock across 4 godowns)
+    * GET    /api/quotations/:id             (Get quotation detail & PDF)
+    * PUT    /api/quotations/:id             (Edit quotation)
+    * DELETE /api/quotations/:id             (Delete quotation)
+
+STAGE 2: BOOKING CONFIRMATION & ADVANCE
+  - Customer approves quotation -> Quotation converts to Booking.
+  - Booking status moves to `CONFIRMED` upon advance payment recording.
+  - Rental agreement contract generated.
+  - API Endpoints:
+    * GET    /api/bookings                   (List bookings)
+    * POST   /api/bookings                   (Create booking from quotation)
+    * GET    /api/bookings/:id               (Get booking details)
+    * PUT    /api/bookings/:id               (Update booking details)
+    * DELETE /api/bookings/:id               (Cancel booking & release reservation)
+
+STAGE 3: MULTI-GODOWN MATERIAL RESERVATION & SPLIT
+  - System locks required quantities for the event dates.
+  - Auto-split algorithm suggests optimal allocation from Godown 1, 2, 3, 4.
+  - Item status changes from `Available` to `Reserved`.
+  - API Endpoints:
+    * GET    /api/reservations               (List reservations)
+    * POST   /api/reservations               (Create reservation)
+    * POST   /api/reservations/suggest-split (Algorithm recommendation across godowns)
+    * POST   /api/reservations/:id/lock      (Lock stock)
+    * POST   /api/reservations/:id/release   (Release stock)
+
+STAGE 4: LOADING SLIP & VEHICLE DISPATCH
+  - Store Manager generates Godown Loading Slips for each godown.
+  - Manual loading verification checklist used during loading into assigned vehicle.
+  - Dispatch status changes to `DISPATCHED`. Material status -> `In-Transit`.
+  - API Endpoints:
+    * GET    /api/dispatches                 (List dispatches)
+    * POST   /api/dispatches                 (Create dispatch order)
+    * GET    /api/dispatches/:id/loading-slip (Get godown loading slip)
+    * PUT    /api/dispatches/:id/status      (Update status: Loading -> Dispatched)
+    * DELETE /api/dispatches/:id             (Cancel dispatch)
+
+STAGE 5: SITE RECEIPT, SETUP & EVENT EXECUTION
+  - Supervisor receives vehicle at site, verifies material against Loading Slip.
+  - Setup completed -> Supervisor uploads setup photos & marks attendance.
+  - Material status -> `At Site`.
+  - API Endpoints:
+    * GET    /api/events                     (List active events)
+    * POST   /api/events/:id/site-receipt    (Confirm site receipt & photo upload)
+    * PUT    /api/events/:id/status          (Update status: Setup -> Live -> Complete)
+
+STAGE 6: PACKING, RETURN & GODOWN RECEIVING
+  - Event concludes -> Packing checklist verified by supervisor.
+  - Loaded back into vehicle -> Dispatched to godowns.
+  - Store Manager receives vehicle at godown door.
+  - API Endpoints:
+    * GET    /api/returns                    (List return dispatches)
+    * POST   /api/returns                    (Create return slip)
+    * PUT    /api/returns/:id/receive        (Confirm godown receipt)
+
+STAGE 7: GODOWN VERIFICATION & ITEM CLASSIFICATION
+  - Returned items inspected and classified into 5 categories:
+    1. GOOD      -> Returns immediately to `Available` stock.
+    2. DAMAGED   -> Moves to `Repair` section; damage charges billed to customer.
+    3. REPAIR    -> Sent to repair vendor via repair request.
+    4. MISSING   -> Billed to customer; inventory count updated.
+    5. SCRAP     -> Unrepairable; written off & sold as scrap.
+  - API Endpoints:
+    * GET    /api/verifications              (List verifications)
+    * POST   /api/verifications              (Submit godown verification)
+    * POST   /api/repairs                    (Create repair request)
+    * POST   /api/scraps                     (Create scrap request)
+
+
+================================================================================
+5. COMPLETE FORM FIELDS SPECIFICATION FOR ALL MODULES
+================================================================================
+
+5.1 ITEM MASTER FORM (Inventory Module)
+    - Category ID (Dropdown)
+    - Item Name (Text)
+    - Item Code / SKU (Text)
+    - Unit of Measurement (Pieces, Sq Ft, Meters, Sets, Nos)
+    - Purchase Cost (Number)
+    - Rental Cost per Day (Number)
+    - Minimum Stock Alert Threshold (Number)
+    - Description & Specifications (Textarea)
+    - Item Images (File Upload / Cloudinary)
+
+5.2 WAREHOUSE / GODOWN FORM (Warehouse Module)
+    - Warehouse Name (Text)
+    - Warehouse Code (e.g. WH01, WH02)
+    - Location / Address (Text)
+    - In-charge Manager ID (Dropdown)
+    - Contact Phone (Text)
+    - Total Capacity (Sq Ft / Units)
+    - Status (Active / Inactive)
+
+5.3 ZONE & RACK FORM (Godown Sub-Module)
+    - Warehouse ID (Dropdown)
+    - Zone Name (Text, e.g. Zone A - Furniture)
+    - Rack Number (Text, e.g. Rack 01)
+    - Capacity (Number)
+
+5.4 CUSTOMER FORM (CRM Module)
+    - Customer Name (Text)
+    - Phone Number (Text)
+    - Alternate Phone (Text)
+    - Email Address (Text)
+    - Billing Address (Textarea)
+    - City, State, Pincode (Text)
+    - GSTIN / Tax ID (Text)
+    - Customer Group (Individual, Event Management, Corporate, Hotel)
+
+5.5 LEAD FORM (CRM Module)
+    - Customer ID / Name (Dropdown / Text)
+    - Phone & Email (Text)
+    - Event Type (Wedding, Reception, Corporate Conference, Birthday, Exhibition)
+    - Expected Event Date (Date Picker)
+    - Expected Venue Location (Text)
+    - Estimated Budget Range (Number)
+    - Lead Source (Call, Website, Referral, Social Media, Walk-in)
+    - Lead Status (New, Contacted, Site Visit, Quotation, Booked, Lost)
+    - Notes & Requirements (Textarea)
+
+5.6 QUOTATION FORM (Quotation Module)
+    - Customer ID (Dropdown)
+    - Event Title & Type (Text)
+    - Event Start Date & Time (Date-Time Picker)
+    - Event End Date & Time (Date-Time Picker)
+    - Venue Address (Textarea)
+    - Selected Items Table:
+      * Item ID & Name
+      * Rental Rate / Day
+      * Duration (Days)
+      * Quantity Requested
+      * Discount (%)
+      * Total Amount
+    - Delivery / Transport Charges (Number)
+    - Setup & Labour Charges (Number)
+    - Tax Rate (GST 18% / Exempt)
+    - Quotation Terms & Conditions (Textarea)
+
+5.7 BOOKING FORM (Booking Module)
+    - Quotation ID (Dropdown reference)
+    - Customer ID (Auto-populated)
+    - Confirmed Event Dates (Date-Time Picker)
+    - Total Booking Amount (Auto-calculated)
+    - Advance Amount Required (Number)
+    - Advance Paid Amount (Number)
+    - Balance Payable (Auto-calculated)
+    - Assigned Event Supervisor ID (Dropdown)
+    - Booking Status (Draft, Confirmed, In-Progress, Completed, Cancelled)
+
+5.8 MATERIAL RESERVATION FORM (Operations Module)
+    - Booking ID (Dropdown)
+    - Reservation Date (Date Picker)
+    - Godown Allocation Table:
+      * Item ID
+      * Total Required Qty
+      * Reserved Qty from Main Godown
+      * Reserved Qty from Godown 2
+      * Reserved Qty from Godown 3
+      * Reserved Qty from Godown 4
+      * Lock Status (Locked / Released)
+
+5.9 DISPATCH & LOADING SLIP FORM (Operations Module)
+    - Booking ID (Dropdown)
+    - Godown ID (Dropdown)
+    - Dispatch Date & Time (Date-Time Picker)
+    - Vehicle ID / Number (Dropdown / Text)
+    - Driver Name & Phone (Text)
+    - Loading Checklist Items (Item ID, Qty, Manually Verified Checkbox)
+    - Gate Pass / Loading Slip Ref No (Text)
+
+5.10 RETURN & GODOWN VERIFICATION FORM (Operations Module)
+    - Dispatch ID / Event ID (Dropdown)
+    - Return Date & Time (Date-Time Picker)
+    - Receiving Godown ID (Dropdown)
+    - Inspection Checklist Table:
+      * Item ID
+      * Dispatched Qty
+      * Returned Good Qty
+      * Returned Damaged Qty
+      * Returned Repair Qty
+      * Missing Qty
+      * Scrap Qty
+      * Damage Remarks & Photos (File Upload)
+      * Damage Charge Assessed (Number)
+
+5.11 PAYMENT RECORD FORM (Finance Module)
+    - Booking ID / Invoice ID / Vendor ID (Dropdown)
+    - Payment Date (Date Picker)
+    - Payment Type (Customer Advance, Customer Final, Vendor Payment, Refund)
+    - Amount Paid (Number)
+    - Payment Mode (Cash, UPI, NEFT/RTGS, Cheque)
+    - Reference / UTR Number (Text)
+    - Received By / Paid By Staff ID (Dropdown)
+    - Receipt Notes (Textarea)
+
+5.12 EXPENSE RECORD FORM (Finance Module)
+    - Event ID / General (Dropdown)
+    - Expense Category (Labour, Fuel/Transport, Food, Maintenance, Misc)
+    - Expense Date (Date Picker)
+    - Amount (Number)
+    - Paid To / Vendor Name (Text)
+    - Payment Mode (Cash / Bank)
+    - Voucher / Bill Photo (File Upload)
+    - Remarks (Text)
+
+5.13 PURCHASE ORDER FORM (Procurement Module)
+    - Vendor ID (Dropdown)
+    - Purchase Date (Date Picker)
+    - Expected Delivery Date (Date Picker)
+    - Destination Godown ID (Dropdown)
+    - Ordered Items Table (Item ID, Qty, Unit Cost, Total Cost)
+    - PO Status (Draft, Pending Approval, Approved, Received, Cancelled)
+
+5.14 STAFF / HR FORM (HR Module)
+    - Full Name (Text)
+    - Employee Code (Text)
+    - Role / Designation (Store Manager, Supervisor, Driver, Labour, Accountant)
+    - Phone Number (Text)
+    - Daily Wage / Monthly Salary (Number)
+    - Government ID / Aadhar Number (Text)
+    - Address & Emergency Contact (Textarea)
+    - Status (Active / Inactive)
+
+5.15 VEHICLE FORM (HR & Logistics Module)
+    - Vehicle Number / Registration (Text, e.g. RJ-14-GA-1234)
+    - Vehicle Type (Truck, Tempo, Pickup, Loader)
+    - Ownership (Owned / Hired Third-Party)
+    - Driver Name & Contact (Text)
+    - Fitness / Insurance Renewal Date (Date Picker)
+    - Status (Available, In-Transit, Maintenance)
+
+
+================================================================================
+6. RESTful API MASTER ENDPOINT INDEX (ALL 29 MODULES)
+================================================================================
+
+All routes follow the base URL format: `http://localhost:5000/api/<module>`
+
+--------------------------------------------------------------------------------
+MODULE                   HTTP METHOD    ENDPOINT                      ACTION
+--------------------------------------------------------------------------------
+1. AUTH                  POST           /api/auth/login               User Login
+                         POST           /api/auth/logout              User Logout
+                         POST           /api/auth/refresh             Refresh Access Token
+                         GET            /api/auth/me                  Get Profile & Permissions
+
+2. DASHBOARD             GET            /api/dashboard/stats          Get Owner Dashboard Cards
+                         GET            /api/dashboard/today-events   Get Today's Event List
+                         GET            /api/dashboard/alerts         Get Low Stock & Due Alerts
+
+3. WAREHOUSES            GET            /api/warehouses               List all 4 Godowns
+                         POST           /api/warehouses               Create new Godown
+                         GET            /api/warehouses/:id           Get Godown Details
+                         PUT            /api/warehouses/:id           Update Godown Info
+                         DELETE         /api/warehouses/:id           Soft Delete Godown
+                         POST           /api/warehouses/:id/zones     Add Zone to Godown
+                         POST           /api/warehouses/:id/racks     Add Rack to Zone
+
+4. INVENTORY             GET            /api/inventory/items          List Inventory Items
+                         POST           /api/inventory/items          Add New Rental Item
+                         GET            /api/inventory/items/:id      Get Item Detail
+                         PUT            /api/inventory/items/:id      Update Item Info
+                         DELETE         /api/inventory/items/:id      Soft Delete Item
+                         POST           /api/inventory/categories     Add Item Category
+                         GET            /api/inventory/categories     List Categories
+                         GET            /api/inventory/ledger         View Item Stock Movement
+
+5. CRM (CUSTOMERS)       GET            /api/crm/customers            List Customers
+                         POST           /api/crm/customers            Add Customer
+                         GET            /api/crm/customers/:id        Get Customer Detail
+                         PUT            /api/crm/customers/:id        Update Customer
+                         DELETE         /api/crm/customers/:id        Delete Customer
+
+6. CRM (LEADS)           GET            /api/crm/leads                List Leads
+                         POST           /api/crm/leads                Add Lead
+                         GET            /api/crm/leads/:id            Get Lead Detail
+                         PUT            /api/crm/leads/:id            Update Lead/Status
+                         DELETE         /api/crm/leads/:id            Delete Lead
+
+7. CRM (SITE VISITS)     GET            /api/crm/site-visits          List Site Visits
+                         POST           /api/crm/site-visits          Schedule Site Visit
+                         GET            /api/crm/site-visits/:id      Get Visit Detail
+                         PUT            /api/crm/site-visits/:id      Update Visit Notes
+                         DELETE         /api/crm/site-visits/:id      Cancel Visit
+
+8. QUOTATIONS            GET            /api/quotations               List Quotations
+                         POST           /api/quotations               Create Quotation
+                         POST           /api/quotations/check-stock   Check Stock Availability
+                         GET            /api/quotations/:id           Get Quotation & PDF
+                         PUT            /api/quotations/:id           Update Quotation
+                         DELETE         /api/quotations/:id           Delete Quotation
+
+9. BOOKINGS              GET            /api/bookings                 List Bookings
+                         POST           /api/bookings                 Convert Quotation to Booking
+                         GET            /api/bookings/:id             Get Booking Detail
+                         PUT            /api/bookings/:id             Update Booking Status
+                         DELETE         /api/bookings/:id             Cancel Booking
+
+10. RESERVATIONS         GET            /api/reservations             List Material Reservations
+                         POST           /api/reservations             Create Reservation
+                         POST           /api/reservations/suggest     Auto-split Algorithm
+                         POST           /api/reservations/:id/lock    Lock Reserved Stock
+                         POST           /api/reservations/:id/release Release Locked Stock
+
+11. DISPATCHES           GET            /api/dispatches               List Dispatches
+                         POST           /api/dispatches               Create Dispatch Order
+                         GET            /api/dispatches/:id/slip      Get Loading Slip PDF
+                         PUT            /api/dispatches/:id/status    Update Status
+                         DELETE         /api/dispatches/:id           Cancel Dispatch
+
+12. TRANSFERS            GET            /api/warehouse-transfers      List Godown Transfers
+                         POST           /api/warehouse-transfers      Create Stock Transfer
+                         PUT            /api/warehouse-transfers/:id/receive  Receive Transfer
+
+13. EVENTS               GET            /api/events                   List Active Events
+                         GET            /api/events/:id               Get Event Timeline
+                         POST           /api/events/:id/site-receipt  Confirm Site Receipt
+                         PUT            /api/events/:id/status        Update Event Status
+
+14. RETURNS              GET            /api/returns                  List Returns
+                         POST           /api/returns                  Create Return Slip
+                         PUT            /api/returns/:id/receive      Receive Return Vehicle
+
+15. VERIFICATIONS        GET            /api/verifications           List Verifications
+                         POST           /api/verifications           Submit Verification
+
+16. REPAIRS              GET            /api/repairs                  List Repair Requests
+                         POST           /api/repairs                  Create Repair Request
+                         PUT            /api/repairs/:id/complete     Complete Repair
+
+17. SCRAP                GET            /api/scraps                   List Scrap Items
+                         POST           /api/scraps                   Create Scrap Entry
+
+18. PAYMENTS             GET            /api/payments                 List Payment Ledger
+                         POST           /api/payments                 Record Payment
+                         GET            /api/payments/:id             Get Receipt PDF
+
+19. EXPENSES             GET            /api/expenses                 List Expenses
+                         POST           /api/expenses                 Log Expense
+                         PUT            /api/expenses/:id             Edit Expense
+                         DELETE         /api/expenses/:id             Delete Expense
+
+20. FINANCE              GET            /api/finance/cashbook         Get Daily Cashbook
+                         GET            /api/finance/bankbook         Get Bankbook Ledger
+                         GET            /api/finance/pnl              Get Event & Overall P&L
+
+21. INVOICES             GET            /api/invoices                 List Invoices
+                         POST           /api/invoices/generate        Generate Tax Invoice
+                         GET            /api/invoices/:id             Get Invoice PDF
+
+22. PURCHASES            GET            /api/purchases                List Purchase Orders
+                         POST           /api/purchases                Create PO
+                         PUT            /api/purchases/:id/approve    Approve PO
+                         POST           /api/purchases/:id/receive    Goods Receipt (GRN)
+
+23. VENDORS              GET            /api/vendors                  List Vendors
+                         POST           /api/vendors                  Add Vendor
+                         GET            /api/vendors/:id              Get Vendor Detail & Ledger
+                         PUT            /api/vendors/:id              Update Vendor
+
+24. STAFF                GET            /api/staff                    List Employees
+                         POST           /api/staff                    Add Employee
+                         POST           /api/staff/attendance         Mark Daily Attendance
+
+25. VEHICLES             GET            /api/vehicles                 List Vehicles
+                         POST           /api/vehicles                 Add Vehicle
+                         PUT            /api/vehicles/:id             Update Vehicle Info
+
+26. REPORTS              GET            /api/reports/:type            Generate 16 Report Types
+
+27. SETTINGS             GET            /api/settings/company         Get Company Profile
+                         PUT            /api/settings/company         Update Company Info
+                         POST           /api/settings/setup-wizard    First-Time Setup
+
+28. AUDIT                GET            /api/audit                    View System Audit Trail
+
+29. AI FEATURES          POST           /api/ai/theme-suggest         AI Theme & Layout Suggestions
+                         POST           /api/ai/budget-calc           AI Event Budget Estimator
+
+30. CHAT MESSENGER       GET            /api/chat/conversations       Fetch User Direct Conversations
+                         POST           /api/chat/conversations       Create 1-on-1 Conversation
+                         GET            /api/chat/messages/:id        Get Message History & Audio Notes
+                         POST           /api/chat/messages            Send Message (Text/Media/Voice Note)
+                         POST           /api/chat/upload              Upload Voice Note / Media (Cloudinary)
+                         PUT            /api/chat/read-all/:id        Mark Messages Read
+--------------------------------------------------------------------------------

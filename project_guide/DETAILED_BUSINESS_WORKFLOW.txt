@@ -1,0 +1,527 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - DETAILED BUSINESS & OPERATIONAL WORKFLOW
+================================================================================
+  Business: Krishna Tent & Events (Single Owner ERP)
+  Infrastructure: 4 Warehouses / Godowns (Main Godown, Jaipur Godown, 
+                 Lighting Godown, Resort Store)
+  Backbone Philosophy: 
+  WAREHOUSE -> AVAILABLE STOCK -> EVENT BOOKING -> RESERVATION -> LOADING 
+  -> DISPATCH -> SITE SETUP -> RETURN -> VERIFICATION -> AVAILABLE AGAIN
+================================================================================
+
+
+================================================================================
+1. OVERVIEW & PARALLEL WORKFLOW ARCHITECTURE
+================================================================================
+The ERP operates on 2 primary parallel workflows:
+
+FLOW A: BUSINESS & WAREHOUSE OPERATIONS (Daily Godown & Inventory Management)
+FLOW B: EVENT ORDER & REVENUE LIFECYCLE (Customer Enquiry to Event Closure)
+
+Both flows converge seamlessly at the Stock Ledger and Finance Cashbook levels.
+
+
+================================================================================
+2. DEPARTMENT 1 : WAREHOUSE STOCK & REPLENISHMENT WORKFLOW
+================================================================================
+Scenario: Plastic Chairs in Jaipur Warehouse drop below minimum threshold.
+
+  DASHBOARD ALERT
+        │
+        ▼
+  Jaipur Warehouse -> Plastic Chair
+  Available: 120 | Minimum Required: 300
+  Status: LOW STOCK ALERT
+        │
+        ▼
+  Store Manager creates Purchase Request (Need: 300 Plastic Chairs)
+        │
+        ▼
+  Owner Notification & Approval (Approve / Reject / Modify)
+        │
+        ▼
+  Purchase Order (PO) Generated for Vendor (e.g. ABC Furniture)
+        │
+        ▼
+  Vendor Delivers Material at Jaipur Godown Door
+        │
+        ▼
+  Store Manager performs Goods Receive Note (GRN) & Quality Check
+        │
+        ▼
+  Warehouse Entry & SKU Assignment
+        │
+        ▼
+  Inventory Stock Update (+300 Chairs)
+        │
+        ▼
+  Dashboard Updated -> Jaipur Warehouse Plastic Chairs: 420 (Status: OK)
+
+
+================================================================================
+3. DEPARTMENT 2 : NEW ITEM MASTER & OPENING STOCK WORKFLOW
+================================================================================
+Scenario: Owner decides to add P4 LED Wall to rental catalog.
+
+  OWNER
+    │
+    ▼
+  Inventory Module -> Click [Add New Item]
+    │
+    ▼
+  Fill Item Master Form:
+  ├── Category: LED Wall / AV
+  ├── Item Name: P4 Outdoor LED Wall
+  ├── SKU Code: LED-P4-001
+  ├── Unit: Sq Ft
+  ├── Purchase Cost: Rs. 1,200 / Sq Ft
+  ├── Rental Rate: Rs. 150 / Sq Ft / Day
+  ├── Minimum Stock Alert: 100 Sq Ft
+  └── SKU Code Assignment
+    │
+    ▼
+  Click [Save Item]
+    │
+    ▼
+  Select Godown Allocation:
+  ├── Main Warehouse Opening Stock: 200 Sq Ft
+  └── Lighting Warehouse Opening Stock: 100 Sq Ft
+    │
+    ▼
+  Stock Ledger Initialized
+    │
+    ▼
+  Item instantly available in Quotation Builder for Sales Team
+
+
+================================================================================
+4. DEPARTMENT 3 : INTER-WAREHOUSE STOCK TRANSFER WORKFLOW
+================================================================================
+Scenario: Main Warehouse has 1200 chairs, Jaipur Warehouse has 80 chairs.
+         An upcoming event in Jaipur requires 300 chairs.
+
+  MAIN WAREHOUSE: 1200 Chairs  |  JAIPUR WAREHOUSE: 80 Chairs
+        │
+        ▼
+  Owner / Manager initiates Inter-Godown Transfer:
+  ├── Source Godown: Main Warehouse
+  ├── Destination Godown: Jaipur Warehouse
+  ├── Item: Plastic Chair
+  └── Quantity: 300
+        │
+        ▼
+  Owner Approval (Instant if created by Owner)
+        │
+        ▼
+  Loading Slip generated at Main Warehouse -> Loading into Truck
+        │
+        ▼
+  Dispatch Status: IN-TRANSIT (Main Warehouse Stock temporarily locked)
+        │
+        ▼
+  Truck arrives at Jaipur Warehouse -> Store Manager verifies count
+        │
+        ▼
+  Click [Confirm Receipt]
+        │
+        ▼
+  ATOMIC DUAL-STOCK LEDGER UPDATE:
+  ├── Main Warehouse Stock updated: 1200 - 300 = 900 Chairs
+  └── Jaipur Warehouse Stock updated:  80 + 300 = 380 Chairs
+
+
+================================================================================
+5. DEPARTMENT 4 : REPAIR MANAGEMENT WORKFLOW
+================================================================================
+Scenario: 15 broken chairs identified during return inspection.
+
+  Godown Verification identifies 15 Broken Chairs
+        │
+        ▼
+  Store Manager logs Repair Request (Remarks: Frame Bending / Seat Crack)
+        │
+        ▼
+  Item status changes: Available -> Under Repair (Stock locked from booking)
+        │
+        ▼
+  Owner Approval for Repair Vendor Assignment
+        │
+        ▼
+  Chairs handed over to Repair Vendor (Voucher & Outward Gate Pass)
+        │
+        ▼
+  Vendor completes repair & delivers back to godown
+        │
+        ▼
+  Quality Inspection by Store Manager -> Click [Complete Repair]
+        │
+        ▼
+  Repair Expense logged in Finance Module
+        │
+        ▼
+  Stock status updated: Under Repair -> Available Again (+15 Chairs)
+
+
+================================================================================
+6. DEPARTMENT 5 : SCRAP & WRITE-OFF WORKFLOW
+================================================================================
+Scenario: 5 chairs found unrepairable (completely crushed).
+
+  Repair Vendor / Manager inspects chairs -> Repair Not Possible
+        │
+        ▼
+  Store Manager creates Scrap Request (Photos & Reason attached)
+        │
+        ▼
+  Owner Review & Approval
+        │
+        ▼
+  Item permanently removed from Active Inventory Count (-5 Chairs)
+        │
+        ▼
+  Scrap Sale Entry created (Scrap sold to kabadi / metal vendor for Rs. 500)
+        │
+        ▼
+  Finance Entry auto-posted: Cashbook credited +500, Inventory loss logged
+
+
+================================================================================
+7. DEPARTMENT 6 : PURCHASE MANAGEMENT WORKFLOW
+================================================================================
+Scenario: Bulk procurement of new sofa sets from vendor.
+
+  VENDOR CREATION (ABC Furniture, Contact, GST, Bank Details)
+        │
+        ▼
+  Create Purchase Order (PO): 50 Sofa Sets @ Rs. 4,000 = Rs. 2,00,000
+        │
+        ▼
+  Owner Approval & PO PDF sent to Vendor
+        │
+        ▼
+  Goods Receive Note (GRN): Goods delivered at Main Godown
+        │
+        ▼
+  Vendor Invoice Uploaded
+        │
+        ▼
+  Payment Entry (Advance Rs. 50,000 paid via NEFT, Balance Rs. 1,50,000 Due)
+        │
+        ▼
+  Inventory Stock Updated (+50 Sofas)
+        │
+        ▼
+  Vendor Ledger & Due Alert updated in Owner Dashboard
+
+
+================================================================================
+8. DEPARTMENT 7 : EVENT ORDER LIFECYCLE (MAIN REVENUE ENGINE)
+================================================================================
+
+[STAGE 1: SALES & CUSTOMER INQUIRY]
+  Customer Call / Walk-in
+        │
+        ▼
+  CRM Module -> Create Lead (Customer Name, Phone, Event Date, Event Type)
+        │
+        ▼
+  Schedule Site Visit -> Assign Supervisor
+        │
+        ▼
+  Supervisor visits venue, measures dimensions, notes power/access points
+
+[STAGE 2: QUOTATION & LIVE STOCK CHECK]
+  Open Quotation Builder -> Select Event Start & End Dates
+        │
+        ▼
+  Add Items: 500 Chairs, 50 Tables, 1 Tent (100x50 ft), Lighting Package
+        │
+        ▼
+  SYSTEM AUTO-CHECKS LIVE AVAILABILITY ACROSS ALL 4 GODOWNS
+  (Ensures items are not already booked/reserved for overlapping dates)
+        │
+        ▼
+  Generate Quotation PDF (Itemized Rates + Transport + Labour + GST)
+        │
+        ▼
+  Send Quotation to Customer -> Customer Approves
+
+[STAGE 3: BOOKING & ADVANCE PAYMENT]
+  Click [Convert Quotation to Booking]
+        │
+        ▼
+  Record Advance Payment (e.g. Rs. 50,000 via UPI/Cash)
+        │
+        ▼
+  Booking Status changes to CONFIRMED
+        │
+        ▼
+  Rental Agreement Contract PDF generated & signed
+        │
+        ▼
+  Calendar Widget updated with Event Dates
+
+[STAGE 4: STORE TEAM - MATERIAL RESERVATION & SPLIT]
+  System triggers Material Reservation
+        │
+        ▼
+  MULTI-GODOWN AUTO-SPLIT SUGGESTION:
+  ├── Main Godown: 300 Chairs, 30 Tables
+  ├── Jaipur Godown: 200 Chairs, 20 Tables
+  └── Lighting Godown: Full Lighting Package
+        │
+        ▼
+  Store Manager confirms split -> Click [Lock Stock]
+        │
+        ▼
+  Reserved Stock is locked (cannot be booked by any other user)
+
+[STAGE 5: DISPATCH & VEHICLE LOADING]
+  Event Date arrives -> Godown Loading Slips generated per godown
+        │
+        ▼
+  Store Team manually verifies items during vehicle loading
+        │
+        ▼
+  Assign Vehicle & Driver (Truck RJ-14-GA-1234, Driver Ramu)
+        │
+        ▼
+  Gate Pass generated -> Status: DISPATCHED -> Material Status: IN-TRANSIT
+
+[STAGE 6: SITE RECEIPT & SETUP EXECUTION]
+  Vehicle arrives at Venue -> Supervisor receives material
+        │
+        ▼
+  Click [Confirm Site Receipt] in Mobile/Web UI
+        │
+        ▼
+  On-site setup execution (Tent erection, lighting installation, seating)
+        │
+        ▼
+  Supervisor uploads Setup Photos & logs Site Attendance
+        │
+        ▼
+  Event Live -> Event Concludes
+
+[STAGE 7: PACKING, RETURN & GODOWN VERIFICATION]
+  Event Complete -> Supervisor oversees dismantling & packing
+        │
+        ▼
+  Packing Checklist verified -> Loaded back into vehicles
+        │
+        ▼
+  Dispatched back to godowns -> Vehicle arrives at Godown Door
+        │
+        ▼
+  Store Manager receives vehicle & performs RETURN VERIFICATION:
+  ├── 480 Chairs GOOD     -> Immediately returned to Available Stock
+  ├── 15 Chairs DAMAGED   -> Moved to Repair (Damage charge added to bill)
+  └── 5 Chairs MISSING    -> Marked Missing (Cost billed to Customer)
+        │
+        ▼
+  Stock Ledger updated across all godowns
+
+[STAGE 8: FINAL BILLING & P&L CLOSURE]
+  Accountant generates Final GST Tax Invoice
+  (Base Rental + Damage Charges - Advance Paid = Final Payable)
+        │
+        ▼
+  Record Final Customer Payment
+        │
+        ▼
+  Cashbook & Bankbook auto-updated
+        │
+        ▼
+  SYSTEM CALCULATES EVENT PROFIT & LOSS:
+  Total Revenue (Rs. 1,80,000) 
+  - Labour Expenses (Rs. 20,000)
+  - Vehicle Transport Fuel (Rs. 12,000)
+  - Third-party Generator Hire (Rs. 15,000)
+  -----------------------------------------
+  NET EVENT PROFIT: Rs. 1,33,000
+        │
+        ▼
+  Event Status: CLOSED
+
+
+================================================================================
+9. DEPARTMENT 8 : RESORT ROOM & VENUE BOOKING WORKFLOW
+================================================================================
+Scenario: Customer wants to book Resort Rooms along with Event Decor.
+
+  Customer Enquiry for Resort/Venue Event
+        │
+        ▼
+  Select Resort Rooms (e.g. Deluxe Rooms 101 to 110)
+        │
+        ▼
+  Check Date Availability in Room Booking Calendar
+        │
+        ▼
+  Calculate Room Package + Tent Decor Bundle Rate
+        │
+        ▼
+  Booking & Advance Entry
+        │
+        ▼
+  Guest Check-In on Event Date
+        │
+        ▼
+  Linked Decor Material Movement (Chairs, Stage, Lighting dispatched to Resort)
+        │
+        ▼
+  Event Execution & Guest Stay
+        │
+        ▼
+  Guest Check-Out & Final Integrated Billing (Room Charge + Tent Decor Charge)
+
+
+================================================================================
+10. ROLE-BASED DAILY WORKFLOWS
+================================================================================
+
+10.1 OWNER DAILY WORKFLOW
+  Morning 9:00 AM:
+  - Login -> Dashboard Overview
+  - Review Today's Events (4 Events)
+  - Review Pending Dispatches (2 Dispatches)
+  - Check Stock Alerts (Low Stock warnings)
+  - Check Pending Customer Payments & Vendor Dues
+  - Review Purchase Requests & Stock Transfer Requests -> Click [Approve]
+  
+  Evening 6:00 PM:
+  - Review Dispatches Completed & Material Returned
+  - Review Today's Total Income, Expenses & Net Profit
+  - Review Audit Logs
+  - Logout
+
+10.2 STORE MANAGER DAILY WORKFLOW
+  - Login -> Godown Dashboard
+  - Receive incoming vendor purchases -> Create GRN & Update Stock
+  - Review today's Material Reservations -> Approve Godown Splits
+  - Generate Loading Slips -> Checklist Load Check -> Dispatch Vehicles
+  - Receive returning vehicles -> Perform Return Verification
+  - Categorize returned items (Good, Damaged, Repair, Missing)
+  - Log Repair Requests & Close Godown Day
+
+10.3 SUPERVISOR DAILY WORKFLOW
+  - Login -> Receive Assigned Event Tasks
+  - Reach Event Venue -> Receive Vehicle & Confirm Site Receipt
+  - Oversee Tent & Decor Setup -> Upload Setup Photos
+  - Mark Site Staff Attendance
+  - Oversee Packing after event -> Verify Return Checklist
+  - Dispatch Vehicle back to Godown -> Close Event Task
+
+10.4 ACCOUNTANT DAILY WORKFLOW
+  - Login -> Finance Dashboard
+  - Record Customer Advance Payments & issue receipts
+  - Log Daily Operational Expenses (Labour, Transport, Food)
+  - Pay Vendor Dues & update Vendor Ledgers
+  - Reconcile Daily Cashbook & Bankbook Entries
+  - Generate GST Tax Invoices
+  - Generate Monthly P&L, GST Returns & Sales Reports
+
+
+================================================================================
+11. SINGLE CUSTOMER VS MULTIPLE / CORPORATE CUSTOMER HANDLING WORKFLOW
+================================================================================
+
+11.1 SINGLE CUSTOMER HANDLING (Retail / Individual One-Off Clients)
+--------------------------------------------------------------------------------
+Scenario: Individual customer booking a single event (e.g., Wedding, Birthday).
+
+  NEW INDIVIDUAL ENQUIRY
+        │
+        ▼
+  Create Customer Record:
+  ├── Customer Type: Individual / Retail
+  ├── Name: Ramesh Sharma
+  ├── Phone: 98290XXXXX
+  └── Billing Address & Single Event Location
+        │
+        ▼
+  Single Event Booking Flow:
+  Quotation -> Advance Payment -> Event Execution -> Final Settlement -> Closed
+        │
+        ▼
+  Ledger Account: Standalone event ledger (Closes upon 100% payment receipt).
+
+
+11.2 MULTIPLE / CORPORATE / RECURRING CUSTOMER HANDLING (Event Planners, Hotels)
+--------------------------------------------------------------------------------
+Scenario: Corporate Event Agency / Hotel / Resort running 5-10 events monthly.
+
+  CORPORATE / AGENCY PARENT ACCOUNT CREATION
+        │
+        ▼
+  Setup Corporate Account Profile:
+  ├── Company Name: Royal Weddings & Events Agency
+  ├── GSTIN: 08AAAAA0000A1Z5
+  ├── Primary Contact: Vikram Singh (Managing Director)
+  ├── Credit Limit Allowed: Rs. 10,00,000
+  ├── Payment Terms: 30 Days Net Credit
+  └── Special B2B Contract Rate Discount: 15% Off Standard Rental List
+        │
+        ▼
+  MULTIPLE SIMULTANEOUS EVENT BOOKINGS:
+  ├── Booking #101: Destination Wedding @ Fairmont Hotel (Dec 12)
+  ├── Booking #102: Corporate Gala Dinner @ Marriott (Dec 14)
+  └── Booking #103: Sangeet Ceremony @ Leela Palace (Dec 18)
+        │
+        ▼
+  CREDIT LIMIT ENGINE CHECK:
+  - System checks total outstanding balance across all 3 active bookings.
+  - If Outstanding (Rs. 6,50,000) + New Booking (Rs. 4,00,000) > Credit Limit (Rs. 10,00,000):
+    -> SYSTEM TRIGGER: Credit Limit Breached Alert -> Owner Approval Required.
+        │
+        ▼
+  BULK PAYMENT & CONSOLIDATED STATEMENT OF ACCOUNT:
+  - Corporate Client sends single lump-sum payment of Rs. 5,00,000 via NEFT.
+  - Accountant opens Bulk Payment Allocation Screen:
+    ├── Allocate Rs. 2,00,000 to Invoice #101 (Fully Paid)
+    ├── Allocate Rs. 1,50,000 to Invoice #102 (Partially Paid)
+    └── Allocate Rs. 1,50,000 to Invoice #103 (Advance Received)
+        │
+        ▼
+  Single Consolidated Ledger Statement & Outstanding Aging Report generated.
+
+================================================================================
+12. REAL-TIME INTERNAL CHAT MESSENGER & VOICE NOTE WORKFLOW
+================================================================================
+
+12.1 AUTOMATED TEAM MEMBER ONBOARDING WELCOME MESSAGE FLOW
+--------------------------------------------------------------------------------
+Scenario: Owner or Manager creates/invites a new staff member (e.g., Store Manager or Supervisor).
+
+  CREATE STAFF / TEAM USER (`StaffForm.tsx` / `UserFormView.tsx`)
+        │
+        ▼
+  SYSTEM AUTOMATED TRIGGER:
+  ├── Initialize Socket Room & 1-on-1 Conversation ID
+  └── Auto-Post Welcome Chat Message into Message Stream:
+      "Welcome to Krishna Tent & Events ERP! 👋 You have been added as Supervisor assigned to Jaipur Warehouse."
+        │
+        ▼
+  New Staff Member logs into Portal -> Receives Real-Time Unread Badge Alert.
+
+12.2 ONE-TO-ONE CHAT & WHATSAPP-STYLE VOICE NOTE RECORDING FLOW
+--------------------------------------------------------------------------------
+Scenario: Site Supervisor needs to send a voice note to Store Manager regarding extra decor material needed on venue.
+
+  SUPERVISOR CREATES CHAT MESSAGE (`ChatMessageWindow.tsx`)
+        │
+        ▼
+  Option A: Text Message & Booking Attachment ("Need 20 extra chairs for Booking #101")
+  Option B: Click Mic Button (`VoiceRecorder.tsx`) -> Record 30s Live Voice Note
+        │
+        ▼
+  Voice Note Audio file (.webm/.mp3) uploaded to Cloudinary (`/api/chat/upload`)
+        │
+        ▼
+  Socket.io emits `send_message` event -> Instant push to Receiver (Store Manager)
+        │
+        ▼
+  STORE MANAGER CHAT CANVAS:
+  - Plays Voice Note via `AudioPlayerBubble.tsx` (Waveform visualizer, Play/Pause, Duration 0:30)
+  - Message Status updates to Double Checkmarks (`11:04 AM ✓✓`)
+================================================================================

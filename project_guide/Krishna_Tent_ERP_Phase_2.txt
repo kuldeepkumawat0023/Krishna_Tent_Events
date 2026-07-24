@@ -1,0 +1,92 @@
+Krishna Tent & Events ERP
+PHASE 2 - Warehouse & Inventory Engine
+
+Purpose:
+Manage complete material lifecycle from warehouse to event site and back.
+
+Modules
+1. Warehouse Management
+2. Multi-Warehouse
+3. Zone & Rack Management
+4. Item Master
+5. Opening Stock
+6. Purchase Entry
+7. Stock Transfer
+8. Material Reservation
+9. Loading Checklist
+10. Dispatch
+11. Site Receiving
+12. Event Usage
+13. Packing
+14. Material Return
+15. Verification
+16. Damage / Missing / Repair
+17. Inventory Ledger
+18. Barcode / QR Tracking
+19. Warehouse Reports
+
+End-to-End Material Flow
+
+Purchase
+↓
+Warehouse Receive
+↓
+Quality Check
+↓
+Rack Allocation
+↓
+Available Stock
+↓
+Event Booking
+↓
+Material Planning
+↓
+Reservation
+↓
+Loading Slip
+↓
+Barcode Scan
+↓
+Vehicle Loading
+↓
+Dispatch
+↓
+Site Receiving
+↓
+Setup & Event Usage
+↓
+Packing
+↓
+Return Loading
+↓
+Warehouse Receive
+↓
+Verification
+├─ Available
+├─ Damaged
+├─ Repair
+├─ Missing
+└─ Scrap
+↓
+Inventory Updated
+↓
+Reports
+
+Business Rules
+- No negative stock.
+- Reserved stock cannot be booked again.
+- Every movement creates an inventory ledger entry.
+- Every dispatch belongs to an Event and Warehouse.
+- Partial dispatch and partial return are supported.
+- Damage, repair and missing stock require remarks and approval.
+- Warehouse transfer updates both source and destination stock.
+
+Key Reports
+- Warehouse Stock
+- Material Movement
+- Dispatch Register
+- Return Register
+- Damage Register
+- Repair Register
+- Missing Register
+- Warehouse Transfer Report

@@ -1,0 +1,72 @@
+Krishna Tent & Events ERP
+PHASE 1 - Business Foundation & Customer Journey
+
+This is the planning file for Phase 1.
+
+Modules:
+1. Project Vision
+2. Business Goals
+3. Business Problems
+4. User Roles
+5. Dashboard
+6. Calendar
+7. CRM
+8. Customer Journey
+9. Lead Management
+10. Site Visit
+11. Quotation
+12. Booking
+13. Agreement
+14. Advance Payment
+15. Event Timeline
+16. Business Rules
+
+End-to-End Business Flow
+
+Owner Login
+↓
+Dashboard
+↓
+Customer Enquiry
+↓
+CRM
+↓
+Requirement Discussion
+↓
+Site Visit
+↓
+Quotation
+↓
+Approval
+↓
+Booking
+↓
+Agreement
+↓
+Advance Payment
+↓
+Calendar Planning
+↓
+Material Planning
+↓
+Warehouse Reservation
+↓
+Dispatch
+↓
+Event Execution
+↓
+Material Return
+↓
+Verification
+↓
+Final Payment
+↓
+Profit & Loss
+↓
+Reports
+↓
+Event Closed
+
+Next Phases:
+Phase 2 - Warehouse & Inventory Engine
+Phase 3 - Finance, Operations & Technical Architecture

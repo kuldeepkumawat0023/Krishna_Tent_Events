@@ -1,0 +1,111 @@
+Krishna Tent & Events ERP
+PHASE 3 - Operations, Finance & Technical Architecture
+
+Modules
+1. Staff Management
+2. Attendance
+3. Work Assignment
+4. Vendor Management
+5. Purchase Workflow
+6. Expense Management
+7. Vehicle Management
+8. Resort Room Management
+9. Gallery
+10. WhatsApp Integration
+11. Digital Signature
+12. AI Features
+13. Notifications
+14. Finance
+15. GST
+16. Profit & Loss
+17. Reports
+18. RBAC
+19. Audit Logs
+20. MongoDB Collections
+21. REST API Architecture
+22. Next.js + Node.js Folder Structure
+23. Security
+24. Backup & Recovery
+25. Development Roadmap
+
+Operations Flow
+
+Owner Login
+↓
+Dashboard
+↓
+Assign Staff
+↓
+Allocate Vehicle
+↓
+Approve Purchase
+↓
+Track Expenses
+↓
+Monitor Event
+↓
+Receive Payments
+↓
+Generate Reports
+↓
+Audit Logs
+
+Finance Flow
+
+Booking
+↓
+Advance Payment
+↓
+Expenses
+↓
+Vendor Payments
+↓
+Final Customer Payment
+↓
+GST Calculation
+↓
+Profit & Loss
+↓
+Balance Sheet
+
+Technical Highlights
+- JWT Authentication
+- Role Based Access Control
+- MongoDB Collections
+- REST APIs
+- File Uploads
+- Audit Logging
+- Notification Engine
+- Responsive Next.js Frontend
+- Node.js Backend
+
+AI Features
+- Wedding Theme Suggestions
+- Budget Calculator
+- Decoration Cost Estimation
+- Auto Checklist
+- Vendor Recommendation
+- Weather Alerts
+- Guest Count Planning
+
+Reports
+- Sales
+- Expenses
+- Profit
+- Customer Ledger
+- Vendor Ledger
+- Staff
+- Vehicle
+- Warehouse
+- Inventory
+- Event Profitability
+
+Roadmap
+MVP:
+Dashboard, CRM, Booking, Inventory, Warehouse, Dispatch, Reports
+
+Phase 2:
+Vendors, Vehicles, Resort, WhatsApp, Gallery
+
+Phase 3:
+AI, Analytics, Multi-Branch, Mobile Apps
