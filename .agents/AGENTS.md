@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a **Warehouse-Centric Event ERP** built for **Krishna Tent & Events** — a single-owner tent and event management business with **4 warehouses (godowns)**. This is NOT a SaaS product. No subscription, no multi-tenant, no company registration flow. The owner manages tent bookings, material movement, event execution, and finance through this ERP.
+This is a **Warehouse-Centric Event ERP** built for **Krishna Tent & Events** — a single-owner tent and event management business with **multiple warehouses (godowns)** (dynamically managed by the owner). This is NOT a SaaS product. No subscription, no multi-tenant, no company registration flow. The owner manages tent bookings, material movement, event execution, and finance through this ERP.
 
 **Core Philosophy:** WAREHOUSE → AVAILABLE STOCK → EVENT BOOKING → RESERVATION → LOADING → DISPATCH → SITE → RETURN → VERIFICATION → AVAILABLE AGAIN
 
@@ -190,7 +190,7 @@ lib/services/
 Monorepo init, Express server, MongoDB connection, JWT Auth, Setup Wizard, RBAC middleware.
 
 ### Phase 2: Warehouse Architecture
-4 Warehouses CRUD, Zone & Rack management, Godown stock summary.
+Dynamic Warehouses CRUD (support for adding/managing multiple godowns), Zone & Rack management, Godown stock summary.
 
 ### Phase 3: Inventory & Item Master Engine
 Item Catalog, Categories, Opening Stock, Barcode generation, Inventory Ledger.

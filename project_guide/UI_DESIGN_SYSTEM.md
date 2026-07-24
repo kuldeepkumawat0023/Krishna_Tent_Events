@@ -21,7 +21,7 @@ Positioned prominently at the **TOP OF THE SIDEBAR** right below the Brand Heade
 - **Dropdown Label / Header:** `SWITCH GODOWN / WAREHOUSE`
 - **Dropdown Container:** Styled rounded pill (`bg-zinc-800/80 dark:bg-zinc-900 border border-zinc-700/60 p-2.5 shadow-sm`)
 - **Options Menu:**
-  1. `All Warehouses (Godowns Overview)` — Default consolidated view across all 4 godowns
+  1. `All Warehouses (Godowns Overview)` — Default consolidated view across all dynamic godowns
   2. `Main Warehouse` (● Online) — Filters entire dashboard & inventory stats to Main Godown
   3. `Jaipur Warehouse` (● Online) — Filters entire dashboard & inventory stats to Jaipur Godown
   4. `Ajmer Warehouse` (● Low Stock Alert) — Filters entire dashboard & inventory stats to Ajmer Godown
@@ -202,7 +202,7 @@ The Main Dashboard (`components/dashboard/dashboard/DashboardView.tsx`) is struc
 - **PROFIT & LOSS OVERVIEW:** Dual bar chart comparing Profit (Green `#10B981`) vs Expenses (Brown `#6B4627`) (`₹ 6,45,000` | `+18.7%`)
 - **WAREHOUSE SUMMARY TABLE:**
   - Columns: `Warehouse`, `Available`, `Reserved`, `At Site`, `Loading`, `Repair`, `Damaged`, `Missing`
-  - Rows: Main Warehouse, Jaipur Warehouse, Ajmer Warehouse, Jodhpur Warehouse, Total Summary Row
+  - Rows: [Dynamic List of Warehouses], Total Summary Row
 
 ### Row 3: Operational Cycles & Calendar
 - **INVENTORY STATUS:** Donut chart breakdown (Available 34%, Reserved 37%, Damaged 7%, Repair 8%, Others 14%)
