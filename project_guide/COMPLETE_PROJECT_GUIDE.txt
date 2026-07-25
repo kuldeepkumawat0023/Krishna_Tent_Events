@@ -1,0 +1,675 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - MASTER ARCHITECTURE & DIRECTORY BLUEPRINT
+================================================================================
+  Consolidated Documentation of Frontend, Backend, Database & Workflow Specs
+  Date: 2026-07-22
+================================================================================
+
+
+################################################################################
+# SECTION 1: SYSTEM OVERVIEW & TECH STACK
+################################################################################
+
+Project: Single-Owner Warehouse-Centric Event ERP for Krishna Tent & Events
+Warehouses: 4 Godowns (Main Furniture, Jaipur, Lighting, Resort Store)
+SaaS/Subscription: NONE (Custom enterprise solution)
+
+Tech Stack:
+  - Frontend: Next.js 16 (v16.2.5, App Router) + TypeScript + Tailwind CSS v4
+  - Backend: Node.js + Express.js
+  - Database: MongoDB + Mongoose ODM (39 Models)
+  - Auth: JWT + bcrypt + RBAC (8 User Roles)
+  - Storage: Multer + Cloudinary
+  - AI Engine: DeepSeek API (Event Theme & Budget Recommendations)
+  - Real-time: Socket.io
+
+
+################################################################################
+# SECTION 2: FRONTEND DIRECTORY TREE (`frontend/src/`)
+################################################################################
+
+frontend/src/
+│   proxy.ts (Next.js 16 Network/Route Interceptor)
+│   
+├── app
+│   │   error.tsx
+│   │   favicon.ico
+│   │   globals.css
+│   │   layout.tsx
+│   │   not-found.tsx
+│   │   
+│   ├── (auth)
+│   │   │   layout.tsx
+│   │   │   
+│   │   ├── login
+│   │   │       page.tsx
+│   │   │       
+│   │   └── setup-wizard
+│   │           page.tsx
+│   │           
+│   └── (dashboard)
+│       │   layout.tsx
+│       │   page.tsx
+│       │   
+│       ├── crm
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── customers
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   ├── new
+│       │   │   │       page.tsx
+│       │   │   │       
+│       │   │   └── [id]
+│       │   │       │   page.tsx
+│       │   │       │   
+│       │   │       └── edit
+│       │   │               page.tsx
+│       │   │               
+│       │   ├── leads
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   ├── new
+│       │   │   │       page.tsx
+│       │   │   │       
+│       │   │   └── [id]
+│       │   │           page.tsx
+│       │   │           
+│       │   └── site-visits
+│       │       │   page.tsx
+│       │       │   
+│       │       ├── new
+│       │       │       page.tsx
+│       │       │       
+│       │       └── [id]
+│       │               page.tsx
+│       │               
+│       ├── quotations
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │       │   page.tsx
+│       │       │   
+│       │       └── edit
+│       │               page.tsx
+│       │               
+│       ├── bookings
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │       │   page.tsx
+│       │       │   
+│       │       └── edit
+│       │               page.tsx
+│       │               
+│       ├── warehouses
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   ├── transfer
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   └── new
+│       │   │           page.tsx
+│       │   │           
+│       │   └── [id]
+│       │       │   page.tsx
+│       │       │   
+│       │       └── edit
+│       │               page.tsx
+│       │               
+│       ├── inventory
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── categories
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   └── new
+│       │   │           page.tsx
+│       │   │           
+│       │   ├── items
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   ├── new
+│       │   │   │       page.tsx
+│       │   │   │       
+│       │   │   └── [id]
+│       │   │       │   page.tsx
+│       │   │       │   
+│       │   │       └── edit
+│       │   │               page.tsx
+│       │   │               
+│       │   └── ledger
+│       │           page.tsx
+│       │           
+│       ├── reservation
+│       │   │   page.tsx
+│       │   │   
+│       │   └── [bookingId]
+│       │           page.tsx
+│       │           
+│       ├── dispatches
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │           page.tsx
+│       │           
+│       ├── events
+│       │   │   page.tsx
+│       │   │   
+│       │   └── [id]
+│       │       │   page.tsx
+│       │       │   
+│       │       ├── site-receipt
+│       │       │       page.tsx
+│       │       │       
+│       │       ├── return
+│       │       │       page.tsx
+│       │       │       
+│       │       └── verification
+│       │               page.tsx
+│       │               
+│       ├── finance
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── payments
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   └── new
+│       │   │           page.tsx
+│       │   │           
+│       │   ├── expenses
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   └── new
+│       │   │           page.tsx
+│       │   │           
+│       │   ├── invoices
+│       │   │   │   page.tsx
+│       │   │   │   
+│       │   │   └── [id]
+│       │   │           page.tsx
+│       │   │           
+│       │   ├── cashbook
+│       │   │       page.tsx
+│       │   │       
+│       │   └── bankbook
+│       │           page.tsx
+│       │           
+│       ├── purchases
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │           page.tsx
+│       │           
+│       ├── vendors
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── new
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │           page.tsx
+│       │           
+│       ├── staff
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── attendance
+│       │   │       page.tsx
+│       │   │       
+│       │   └── [id]
+│       │           page.tsx
+│       │           
+│       ├── vehicles
+│       │   │   page.tsx
+│       │   │   
+│       │   └── [id]
+│       │           page.tsx
+│       │           
+│       ├── reports
+│       │   │   page.tsx
+│       │   │   
+│       │   ├── gst
+│       │   │       page.tsx
+│       │   │       
+│       │   ├── profit
+│       │   │       page.tsx
+│       │   │       
+│       │   ├── inventory
+│       │   │       page.tsx
+│       │   │       
+│       │   └── dispatch
+│       │           page.tsx
+│       │           
+│       └── settings
+│           ├── company
+│           │       page.tsx
+│           │       
+│           ├── roles
+│           │   │   page.tsx
+│           │   │   
+│           │   └── [id]
+│           │           page.tsx
+│           │           
+│           └── users
+│               │   page.tsx
+│               │   
+│               └── [id]
+│                       page.tsx
+│                       
+├── components
+│   ├── auth
+│   │       ActionGuard.tsx
+│   │       AuthGuard.tsx
+│   │       AuthSplitLayout.tsx
+│   │       LoginForm.tsx
+│   │       RoleGuard.tsx
+│   │       RoutePermissionGuard.tsx
+│   │       
+│   ├── common
+│   │       AutoScrollToTop.tsx
+│   │       Button.tsx
+│   │       Card.tsx
+│   │       ConfirmModal.tsx
+│   │       DataTable.tsx
+│   │       DeleteModal.tsx
+│   │       DetailViewSkeleton.tsx
+│   │       FormDrawer.tsx
+│   │       Input.tsx
+│   │       PageHeader.tsx
+│   │       Pagination.tsx
+│   │       Skeleton.tsx
+│   │       StatsCard.tsx
+│   │       StatusBadge.tsx
+│   │       ViewPageSkeleton.tsx
+│   │       
+│   └── dashboard
+│       ├── dashboard
+│       │       CalendarWidget.tsx
+│       │       DashboardView.tsx
+│       │       
+│       ├── crm-group
+│       │       CustomerDetailView.tsx
+│       │       CustomerForm.tsx
+│       │       CustomersView.tsx
+│       │       LeadsView.tsx
+│       │       SiteVisitsView.tsx
+│       │       
+│       ├── warehouse-group
+│       │       WarehouseDetailView.tsx
+│       │       WarehouseForm.tsx
+│       │       WarehousesView.tsx
+│       │       StockTransferForm.tsx
+│       │       
+│       ├── inventory-group
+│       │       CategoriesView.tsx
+│       │       CategoryForm.tsx
+│       │       ItemDetailView.tsx
+│       │       ItemForm.tsx
+│       │       ItemsView.tsx
+│       │       LedgerView.tsx
+│       │       
+│       ├── operations-group
+│       │       DispatchDetailView.tsx
+│       │       DispatchForm.tsx
+│       │       DispatchesView.tsx
+│       │       EventDetailView.tsx
+│       │       EventsView.tsx
+│       │       ReturnForm.tsx
+│       │       VerificationForm.tsx
+│       │       
+│       ├── finance-group
+│       │       ExpenseForm.tsx
+│       │       ExpensesView.tsx
+│       │       InvoiceDetailView.tsx
+│       │       InvoicesView.tsx
+│       │       PaymentForm.tsx
+│       │       PaymentsView.tsx
+│       │       
+│       ├── layout
+│       │       DashboardLayout.tsx
+│       │       SideNavBar.tsx
+│       │       TopNavBar.tsx
+│       │       
+│       ├── reports
+│       │       DispatchReportView.tsx
+│       │       GstReportView.tsx
+│       │       InventoryReportView.tsx
+│       │       ProfitReportView.tsx
+│       │       
+│       └── settings
+│               CompanyProfileView.tsx
+│               RoleDetailView.tsx
+│               RolesListView.tsx
+│               UsersListView.tsx
+│               
+├── contexts
+│       AuthContext.tsx
+│       
+├── hooks
+│       useAuth.ts
+│       useDebounce.ts
+│       usePermissions.ts
+│       
+├── lib
+│   │   apiClient.ts
+│   │   
+│   ├── constants
+│   │       permissions.ts
+│   │       
+│   └── services
+│           ai.services.ts
+│           audit.services.ts
+│           auth.services.ts
+│           booking.services.ts
+│           crm.services.ts
+│           dashboard.services.ts
+│           dispatch.services.ts
+│           event.services.ts
+│           expense.services.ts
+│           finance.services.ts
+│           inventory.services.ts
+│           invoice.services.ts
+│           notification.services.ts
+│           payment.services.ts
+│           purchase.services.ts
+│           quotation.services.ts
+│           repair.services.ts
+│           report.services.ts
+│           reservation.services.ts
+│           return.services.ts
+│           role.services.ts
+│           room.services.ts
+│           scrap.services.ts
+│           settings.services.ts
+│           staff.services.ts
+│           vehicle.services.ts
+│           vendor.services.ts
+│           verification.services.ts
+│           warehouse.services.ts
+│           warehouseTransfer.services.ts
+│           
+├── provider
+│       HydrationGuard.tsx
+│       StoreProvider.tsx
+│       ThemeProvider.tsx
+│       
+└── utils
+        cn.ts
+        formatCurrency.ts
+        validations.ts
+
+
+################################################################################
+# SECTION 3: BACKEND DIRECTORY TREE (`backend/`)
+################################################################################
+
+backend/
+│   .env.example
+│   package.json
+│   server.js
+│   
+├── config
+│       cloudinary.js
+│       db.js
+│       deepseek.js
+│       jwt.js
+│       
+├── controllers
+│       aiController.js
+│       authController.js
+│       bookingController.js
+│       crmController.js
+│       dashboardController.js
+│       dispatchController.js
+│       eventController.js
+│       expenseController.js
+│       financeController.js
+│       inventoryController.js
+│       invoiceController.js
+│       paymentController.js
+│       purchaseController.js
+│       quotationController.js
+│       repairController.js
+│       reportsController.js
+│       reservationController.js
+│       returnController.js
+│       roleController.js
+│       scrapController.js
+│       settingsController.js
+│       staffController.js
+│       userController.js
+│       vehicleController.js
+│       vendorController.js
+│       verificationController.js
+│       warehouseController.js
+│       warehouseTransferController.js
+│       
+├── middleware
+│       auditLogger.js
+│       auth.js
+│       errorHandler.js
+│       rbac.js
+│       upload.js
+│       validator.js
+│       
+├── models
+│       Agreement.js
+│       Attendance.js
+│       AuditLog.js
+│       Booking.js
+│       Category.js
+│       Customer.js
+│       Dispatch.js
+│       Event.js
+│       Expense.js
+│       GoodsReceipt.js
+│       InventoryLedger.js
+│       Invoice.js
+│       Item.js
+│       Lead.js
+│       LoadingSlip.js
+│       MaterialPlan.js
+│       Notification.js
+│       Payment.js
+│       PurchaseOrder.js
+│       PurchaseRequest.js
+│       Quotation.js
+│       Rack.js
+│       RepairRequest.js
+│       Reservation.js
+│       Return.js
+│       Role.js
+│       Room.js
+│       RoomBooking.js
+│       ScrapRequest.js
+│       SiteReceipt.js
+│       SiteVisit.js
+│       Staff.js
+│       Stock.js
+│       User.js
+│       Vehicle.js
+│       Vendor.js
+│       Verification.js
+│       Warehouse.js
+│       WarehouseTransfer.js
+│       Zone.js
+│       
+├── routes
+│       ai.routes.js
+│       audit.routes.js
+│       auth.routes.js
+│       booking.routes.js
+│       crm.routes.js
+│       dashboard.routes.js
+│       dispatch.routes.js
+│       event.routes.js
+│       expense.routes.js
+│       finance.routes.js
+│       inventory.routes.js
+│       invoice.routes.js
+│       notification.routes.js
+│       payment.routes.js
+│       purchase.routes.js
+│       quotation.routes.js
+│       repair.routes.js
+│       reports.routes.js
+│       reservation.routes.js
+│       return.routes.js
+│       room.routes.js
+│       scrap.routes.js
+│       settings.routes.js
+│       staff.routes.js
+│       vehicle.routes.js
+│       vendor.routes.js
+│       verification.routes.js
+│       warehouse.routes.js
+│       warehouseTransfer.routes.js
+│       
+├── services
+│       aiService.js
+│       dispatchService.js
+│       invoiceService.js
+│       notificationService.js
+│       quotationService.js
+│       reportService.js
+│       reservationService.js
+│       returnService.js
+│       stockService.js
+│       verificationService.js
+│       
+└── utils
+        apiResponse.js
+        asyncHandler.js
+        constants.js
+        logger.js
+        pdfGenerator.js
+
+
+################################################################################
+# SECTION 4: CORE ERP BUSINESS FLOW & LOGIC RULES
+################################################################################
+
+Core Philosophy:
+  WAREHOUSE → AVAILABLE STOCK → EVENT BOOKING → RESERVATION →
+  LOADING → DISPATCH → SITE → RETURN → VERIFICATION → AVAILABLE AGAIN
+
+Strict Business Rules:
+  1. No Negative Stock - Prevent inventory going below zero.
+  2. Reserved = Locked - Reserved items cannot be booked for another event.
+  3. Every Movement = Ledger Entry - Audit trail for all inventory movements.
+  4. Partial Dispatch & Partial Return fully supported.
+  5. Verification Categories: Good, Damaged, Repair, Missing, Scrap.
+  6. Multi-Warehouse Auto Split: Auto-suggest reservation split across 4 godowns.
+
+================================================================================
+  END OF MASTER ARCHITECTURE & DIRECTORY BLUEPRINT
+================================================================================
+
+
+################################################################################
+# SECTION 5: COMPLETE REST API ENDPOINTS SPECIFICATION
+################################################################################
+
+1. Authentication & Users (/api/auth)
+  - POST /api/auth/login
+  - POST /api/auth/logout
+  - GET  /api/auth/me
+  - POST /api/auth/refresh-token
+  - POST /api/auth/setup-wizard
+
+2. Dashboard (/api/dashboard)
+  - GET /api/dashboard/stats
+  - GET /api/dashboard/calendar
+  - GET /api/dashboard/alerts
+
+3. Warehouses & Transfers (/api/warehouses & /api/warehouse-transfers)
+  - GET/POST /api/warehouses
+  - GET/PUT/DELETE /api/warehouses/:id
+  - POST /api/warehouses/:id/zones
+  - POST /api/warehouses/:id/racks
+  - GET  /api/warehouses/:id/stock-summary
+  - GET/POST /api/warehouse-transfers
+  - PUT /api/warehouse-transfers/:id/approve
+  - PUT /api/warehouse-transfers/:id/receive
+
+4. Inventory Engine (/api/inventory)
+  - GET/POST /api/inventory/categories
+  - GET/POST /api/inventory/items
+  - GET/PUT  /api/inventory/items/:id
+  - POST /api/inventory/opening-stock
+  - GET  /api/inventory/ledger
+
+5. CRM & Sales (/api/crm, /api/quotations, /api/bookings)
+  - GET/POST /api/crm/customers
+  - GET/POST /api/crm/leads
+  - GET/POST /api/crm/site-visits
+  - GET/POST /api/quotations
+  - GET /api/quotations/:id/pdf
+  - POST /api/quotations/:id/convert-booking
+  - GET/POST /api/bookings
+  - POST /api/bookings/:id/agreement
+
+6. Operations & Material Lifecycle (/api/reservations, /api/dispatches, /api/events, /api/returns, /api/verifications)
+  - POST /api/reservations (Multi-godown smart split lock)
+  - GET/POST /api/dispatches
+  - GET /api/dispatches/:id/loading-slip
+  - POST /api/events/:id/site-receipt
+  - POST /api/events/:id/photos
+  - POST /api/returns
+  - POST /api/verifications (Good, Damaged, Repair, Missing, Scrap)
+  - PUT /api/verifications/:id/approve
+
+7. Finance & Billing (/api/finance)
+  - GET/POST /api/finance/payments
+  - GET/POST /api/finance/expenses
+  - GET/POST /api/finance/invoices
+  - GET /api/finance/invoices/:id/pdf
+  - GET /api/finance/cashbook
+  - GET /api/finance/bankbook
+  - GET /api/finance/profit-loss
+
+8. Purchases, Vendors & Reports (/api/purchases, /api/vendors, /api/reports)
+  - GET/POST /api/vendors
+  - GET/POST /api/purchases/orders
+  - POST /api/purchases/goods-receipt
+  - GET /api/reports/sales
+  - GET /api/reports/expenses
+  - GET /api/reports/profitability
+  - GET /api/reports/gst
+  - GET /api/reports/inventory-stock
+  - GET /api/reports/dispatch-register
+
+9. DeepSeek AI & Settings (/api/ai, /api/settings, /api/audit)
+  - POST /api/ai/theme-suggestions
+  - POST /api/ai/cost-estimation
+  - POST /api/ai/auto-checklist
+  - GET/PUT /api/settings/company
+  - GET/PUT /api/settings/roles
+  - GET /api/audit/logs
+
+10. Real-Time Internal Chat & Voice Note Messenger (/api/chat)
+  - GET /api/chat/conversations
+  - POST /api/chat/conversations
+  - GET /api/chat/messages/:id
+  - POST /api/chat/messages
+  - POST /api/chat/upload
+  - PUT /api/chat/read-all/:id
+
+================================================================================
+  END OF MASTER BLUEPRINT
+================================================================================

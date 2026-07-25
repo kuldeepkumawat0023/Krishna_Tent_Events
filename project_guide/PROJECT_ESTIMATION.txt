@@ -1,0 +1,147 @@
+================================================================================
+  KRISHNA TENT & EVENTS ERP - PROJECT ESTIMATION & TIMELINE REPORT
+================================================================================
+  Project Name: Krishna Tent & Events ERP (Warehouse-Centric Event ERP)
+  Tech Stack: Next.js 16 (v16.2.5), Tailwind CSS v4, Node.js + Express.js, 
+              MongoDB (Mongoose ODM), JWT, Socket.io, Multer/Cloudinary, DeepSeek
+  Warehouses: 4 Godowns (Multi-Godown Stock & Material Movement Lifecycle)
+================================================================================
+
+1. EXECUTIVE SUMMARY & ESTIMATION OVERVIEW
+--------------------------------------------------------------------------------
+This project is an Enterprise-Grade Warehouse-Centric Event Management ERP designed
+for single-owner tent and event management operations with 4 godowns. 
+
+The scope covers 10 Comprehensive Phases, 30 Backend REST API Modules, 31 Frontend
+Services, grouped UI components across 8 business departments, 16 ERP Reports, 
+Real-Time Stock Reservations, Damage/Repair/Scrap Workflows, Real-Time Team Chat Messenger
+with WhatsApp-Style Voice Note Recording, and Financial P&L.
+
+ESTIMATION SUMMARY:
+- Total Engineering & UI Development:  578 Hours
+- System Integration & End-to-End QA:     46 Hours
+- Bug Fixing, Edge Cases & Polishing:    46 Hours
+--------------------------------------------------------------------------------
+TOTAL PROJECT HOURS REQUIRED:           670 HOURS
+--------------------------------------------------------------------------------
+
+DELIVERY TIMELINE CONVERSION:
+- Standard Working Velocity (8 Hours / Day):     84 Working Days (~16.8 Weeks / 3.8 Months)
+- Accelerated Velocity (10 Hours / Day):        67 Working Days (~13.4 Weeks / 3.1 Months)
+- Dedicated 2-Developer Pair (8 Hours / Day):   42 Working Days (~8.4 Weeks / 1.9 Months)
+
+
+================================================================================
+2. PHASE-WISE DETAILED HOUR BREAKDOWN
+================================================================================
+
+
+PHASE 1: Monorepo Setup, Core Infra & Authentication
+--------------------------------------------------------------------------------
+- Backend APIs (Express Server, MongoDB connection, JWT Auth, RBAC, Setup Wizard): 14 Hours
+- Frontend Setup (Next.js 16, Tailwind v4, AuthContext, Login & Setup Wizard UI): 16 Hours
+- Testing & Bug Fixes (Token refresh, RBAC authorization checks, Wizard flow):     6 Hours
+Subtotal Phase 1: 36 Hours (approx 4.5 Days)
+
+PHASE 2: Warehouse Architecture & Multi-Godown Management
+--------------------------------------------------------------------------------
+- Backend APIs (4 Warehouses CRUD, Zone & Rack Management, Stock Summary APIs):    16 Hours
+- Frontend UI (WarehousesView, WarehouseDetailView, WarehouseForm, Zone/Rack):     20 Hours
+- Testing & Bug Fixes (Nested zone/rack validation, godown capacity counts):       8 Hours
+Subtotal Phase 2: 44 Hours (approx 5.5 Days)
+
+PHASE 3: Inventory & Item Master Engine
+--------------------------------------------------------------------------------
+- Backend APIs (Category CRUD, Item Master, SKU Generator, Opening Stock): 20 Hours
+- Frontend UI (CategoriesView, ItemsView, ItemForm, ItemDetailView, LedgerView):   24 Hours
+- Testing & Bug Fixes (Stock ledger entries, stock verification, low-stock alerts):  8 Hours
+Subtotal Phase 3: 52 Hours (approx 6.5 Days)
+
+PHASE 4: CRM, Leads & Site Visit Workflow
+--------------------------------------------------------------------------------
+- Backend APIs (Customer DB, Lead Pipeline, Site Visit Scheduling & Assignment):    16 Hours
+- Frontend UI (CustomersView, CustomerForm, LeadsView, LeadForm, SiteVisitsView):  22 Hours
+- Testing & Bug Fixes (Lead status transitions, Site visit calendar sync):          8 Hours
+Subtotal Phase 4: 46 Hours (approx 5.75 Days)
+
+PHASE 5: Quotation Builder & Booking Agreement Engine
+--------------------------------------------------------------------------------
+- Backend APIs (Quotation Engine, Live Multi-Warehouse Stock Check, PDF, Booking): 24 Hours
+- Frontend UI (QuotationsView, QuotationForm, ItemSelector, StockCheck, Booking):   28 Hours
+- Testing & Bug Fixes (Multi-godown availability validation, PDF rendering):      10 Hours
+Subtotal Phase 5: 62 Hours (approx 7.75 Days)
+
+PHASE 6: Stock Reservation & Multi-Godown Planning Engine
+--------------------------------------------------------------------------------
+- Backend APIs (Material Reservation, Auto-Split Algorithm, Lock/Release Stock):  22 Hours
+- Frontend UI (ReservationView, ReservationForm, WarehouseAvailability, Split UI):  24 Hours
+- Testing & Bug Fixes (Split algorithm accuracy, concurrent reservation locks):    10 Hours
+Subtotal Phase 6: 56 Hours (approx 7 Days)
+
+PHASE 7: Loading, Dispatch & Inter-Warehouse Transfers
+--------------------------------------------------------------------------------
+- Backend APIs (Loading Slips, Vehicle Assignment, Dispatch Tracking, Transfers):  22 Hours
+- Frontend UI (DispatchesView, LoadingChecklist, StockTransfersView, TransferForm): 26 Hours
+- Testing & Bug Fixes (Atomic dual-godown transfers, partial dispatch handling):   10 Hours
+Subtotal Phase 7: 58 Hours (approx 7.25 Days)
+
+PHASE 8: Site Execution, Return & Verification Engine
+--------------------------------------------------------------------------------
+- Backend APIs (Site Receipt, Photo Upload, Return Checklist, Damage/Repair/Scrap):24 Hours
+- Frontend UI (EventsView, SiteReceiptForm, PhotoUpload, ReturnForm, Verification):28 Hours
+- Testing & Bug Fixes (Good/Damaged/Missing routing, Cloudinary photo uploads):   10 Hours
+Subtotal Phase 8: 62 Hours (approx 7.75 Days)
+
+PHASE 9: Procurement, Vendors, HR & Real-Time Chat Messenger
+--------------------------------------------------------------------------------
+- Backend APIs (Purchase Orders, Vendors, Staff, Attendance, Chat REST APIs & Socket Config): 30 Hours
+- Frontend UI (PurchasesView, VendorsView, StaffView, AttendanceView, ChatView, MessagesView, VoiceRecorder, AudioPlayerBubble): 38 Hours
+- Testing & Bug Fixes (PO approval, GRN stock increment, Socket.io chat events, Voice Recording): 12 Hours
+Subtotal Phase 9: 80 Hours (approx 10 Days)
+
+PHASE 10: Finance, Ledgers, Reports (16 Types), Audit Engine & Dashboard
+--------------------------------------------------------------------------------
+- Backend APIs (Payments, Expenses, GST Invoices, Cashbook, Bankbook, 16 Reports):  28 Hours
+- Frontend UI (DashboardView, PaymentsView, ExpensesView, Invoices, All 16 Reports):34 Hours
+- Testing & Bug Fixes (P&L accuracy, GST calculation, report export, audit logs):  12 Hours
+Subtotal Phase 10: 74 Hours (approx 9.25 Days)
+
+SYSTEM INTEGRATION, END-TO-END QA & BUG RESOLUTION
+--------------------------------------------------------------------------------
+- End-to-End Business Lifecycle Testing (Lead -> Booking -> Dispatch -> Return):   20 Hours
+- Bug Resolution, Edge Cases & UI Polish:                                          16 Hours
+- Production Deployment Config, DB Indexing & System Handoff:                     10 Hours
+Subtotal QA & Handoff: 46 Hours (approx 5.75 Days)
+
+
+================================================================================
+3. FINAL SUMMARY TABLE & HANDOVER TIMELINE
+================================================================================
+
+--------------------------------------------------------------------------------
+PHASE / MODULE                      DEV HOURS   QA & BUGS   TOTAL HOURS   DAYS
+--------------------------------------------------------------------------------
+Phase 1: Setup, Auth & Wizard          30 hrs       6 hrs        36 hrs    4.5 Days
+Phase 2: Warehouses & Godowns          36 hrs       8 hrs        44 hrs    5.5 Days
+Phase 3: Inventory & Item Master       44 hrs       8 hrs        52 hrs    6.5 Days
+Phase 4: CRM, Leads & Site Visits      38 hrs       8 hrs        46 hrs    5.75 Days
+Phase 5: Quotation & Bookings          52 hrs      10 hrs        62 hrs    7.75 Days
+Phase 6: Stock Reservation Engine      46 hrs      10 hrs        56 hrs    7.0 Days
+Phase 7: Dispatch & Transfers          48 hrs      10 hrs        58 hrs    7.25 Days
+Phase 8: Site Setup, Return & Verify   52 hrs      10 hrs        62 hrs    7.75 Days
+Phase 9: Procurement, HR & Chat        68 hrs      12 hrs        80 hrs   10.0 Days
+Phase 10: Finance, Reports & Audit     62 hrs      12 hrs        74 hrs    9.25 Days
+System Integration & Final Handoff     26 hrs      20 hrs        46 hrs    5.75 Days
+--------------------------------------------------------------------------------
+TOTAL PROJECT PROJECTED WORK:         502 hrs     168 hrs       670 hrs   84 Days
+--------------------------------------------------------------------------------
+
+HANDOVER TIMELINE FOR USER / CLIENT:
+--------------------------------------------------------------------------------
+1. Single Developer (Full Time 8 hrs/day):    ~3.8 Months  (84 Working Days)
+2. Accelerated Delivery (10 hrs/day):         ~3.1 Months  (67 Working Days)
+3. 2-Developer Team (Parallel 16 hrs/day):    ~1.9 Months  (42 Working Days)
+
+Note: All phases include full unit testing, API verification, UI responsiveness check,
+and complete bug fixing before client handover.
+================================================================================
